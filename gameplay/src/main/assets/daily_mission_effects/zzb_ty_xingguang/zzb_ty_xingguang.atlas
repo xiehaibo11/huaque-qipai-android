@@ -1,0 +1,125 @@
+
+zzb_ty_xingguang.png
+size: 460, 276
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+img/gt
+  rotate: false
+  xy: 2, 2
+  size: 113, 123
+  orig: 147, 147
+  offset: 16, 9
+  index: -1
+img/ssfg
+  rotate: false
+  xy: 2, 127
+  size: 147, 147
+  orig: 147, 147
+  offset: 0, 0
+  index: -1
+img/xxlz/xxlz_00
+  rotate: true
+  xy: 206, 167
+  size: 107, 44
+  orig: 120, 66
+  offset: 7, 10
+  index: -1
+img/xxlz/xxlz_01
+  rotate: false
+  xy: 166, 4
+  size: 106, 49
+  orig: 120, 66
+  offset: 8, 10
+  index: -1
+img/xxlz/xxlz_02
+  rotate: true
+  xy: 151, 165
+  size: 109, 53
+  orig: 120, 66
+  offset: 8, 7
+  index: -1
+img/xxlz/xxlz_03
+  rotate: false
+  xy: 274, 9
+  size: 104, 49
+  orig: 120, 66
+  offset: 9, 7
+  index: -1
+img/xxlz/xxlz_04
+  rotate: true
+  xy: 412, 32
+  size: 100, 46
+  orig: 120, 66
+  offset: 12, 9
+  index: -1
+img/xxlz/xxlz_05
+  rotate: false
+  xy: 306, 86
+  size: 104, 46
+  orig: 120, 66
+  offset: 9, 9
+  index: -1
+img/xxlz/xxlz_06
+  rotate: true
+  xy: 166, 55
+  size: 108, 45
+  orig: 120, 66
+  offset: 6, 9
+  index: -1
+img/xxlz/xxlz_07
+  rotate: true
+  xy: 117, 15
+  size: 110, 47
+  orig: 120, 66
+  offset: 4, 7
+  index: -1
+img/xxlz/xxlz_08
+  rotate: false
+  xy: 348, 181
+  size: 105, 45
+  orig: 120, 66
+  offset: 9, 9
+  index: -1
+img/xxlz/xxlz_09
+  rotate: false
+  xy: 348, 134
+  size: 105, 45
+  orig: 120, 66
+  offset: 8, 10
+  index: -1
+img/xxlz/xxlz_10
+  rotate: true
+  xy: 300, 169
+  size: 105, 46
+  orig: 120, 66
+  offset: 7, 10
+  index: -1
+img/xxlz/xxlz_11
+  rotate: false
+  xy: 348, 228
+  size: 105, 46
+  orig: 120, 66
+  offset: 7, 10
+  index: -1
+img/xxlz/xxlz_12
+  rotate: true
+  xy: 252, 168
+  size: 106, 46
+  orig: 120, 66
+  offset: 6, 9
+  index: -1
+img/xxlz/xxlz_13
+  rotate: true
+  xy: 259, 60
+  size: 106, 45
+  orig: 120, 66
+  offset: 6, 9
+  index: -1
+img/xxlz/xxlz_14
+  rotate: true
+  xy: 213, 58
+  size: 107, 44
+  orig: 120, 66
+  offset: 6, 10
+  index: -1

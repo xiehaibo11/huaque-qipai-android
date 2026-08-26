@@ -1,0 +1,41 @@
+
+zzb_jbdt_rk_qxbp.png
+size: 527, 529
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Flare_017_tex
+  rotate: false
+  xy: 250, 5
+  size: 256, 232
+  orig: 256, 256
+  offset: 0, 12
+  index: -1
+glow_6092
+  rotate: false
+  xy: 341, 343
+  size: 184, 184
+  orig: 256, 256
+  offset: 36, 36
+  index: -1
+jbp
+  rotate: false
+  xy: 2, 250
+  size: 337, 277
+  orig: 341, 281
+  offset: 2, 4
+  index: -1
+kojyo_Rainbow_X
+  rotate: false
+  xy: 2, 2
+  size: 246, 246
+  orig: 256, 256
+  offset: 5, 5
+  index: -1
+lizi
+  rotate: false
+  xy: 341, 239
+  size: 102, 102
+  orig: 102, 102
+  offset: 0, 0
+  index: -1

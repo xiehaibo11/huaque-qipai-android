@@ -1,0 +1,34 @@
+
+diani1.png
+size: 179,136
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+2圆点
+  rotate: false
+  xy: 2, 2
+  size: 28, 28
+  orig: 30, 30
+  offset: 1, 1
+  index: -1
+3星星
+  rotate: false
+  xy: 2, 32
+  size: 102, 102
+  orig: 119, 119
+  offset: 7, 8
+  index: -1
+4黄圈圈
+  rotate: false
+  xy: 106, 63
+  size: 71, 71
+  orig: 73, 73
+  offset: 1, 1
+  index: -1
+5白圈圈
+  rotate: true
+  xy: 106, 6
+  size: 55, 69
+  orig: 57, 69
+  offset: 1, 0
+  index: -1

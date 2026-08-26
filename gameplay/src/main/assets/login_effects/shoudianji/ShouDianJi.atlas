@@ -1,0 +1,20 @@
+
+ShouDianJi.png
+size: 256,128
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+guangquan3
+  rotate: false
+  xy: 116, 33
+  size: 86, 86
+  orig: 86, 86
+  offset: 0, 0
+  index: -1
+shou_d
+  rotate: false
+  xy: 2, 2
+  size: 112, 117
+  orig: 112, 117
+  offset: 0, 0
+  index: -1

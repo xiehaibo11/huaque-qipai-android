@@ -1,0 +1,53 @@
+plugins {
+    id 'com.android.library'
+}
+
+def configuredWechatAppId = providers.gradleProperty('WECHAT_APP_ID').orNull ?: ''
+def configuredCsjAppId = providers.gradleProperty('CSJ_APP_ID').orNull ?: '5699881'
+def configuredCsjRewardSlotIds = providers.gradleProperty('CSJ_REWARD_SLOT_IDS').orNull
+        ?: providers.gradleProperty('CSJ_REWARD_SLOT_ID').orNull
+        ?: '945592324,968735997,969006737,969188081,968735998,968731450'
+if (!configuredWechatAppId.isEmpty()
+        && !(configuredWechatAppId ==~ /wx[0-9a-zA-Z]{16}/)) {
+    throw new GradleException('WECHAT_APP_ID must be a valid WeChat mobile AppID')
+}
+
+android {
+    namespace 'com.nanbeiyule.game'
+    compileSdk 35
+
+    defaultConfig {
+        minSdk 23
+        buildConfigField 'String', 'API_BASE_URL', '"https://api.nanbeiyule.com"'
+        buildConfigField 'String', 'PAYMENT_PROVIDER', '"YISHOUMI"'
+        buildConfigField 'String', 'WECHAT_APP_ID', '"' + configuredWechatAppId + '"'
+        buildConfigField 'String', 'CSJ_APP_ID', '"' + configuredCsjAppId + '"'
+        buildConfigField 'String', 'CSJ_REWARD_SLOT_IDS', '"' + configuredCsjRewardSlotIds + '"'
+        buildConfigField 'String', 'ALIYUN_ONE_TAP_SCHEME_KEY', '""'
+        buildConfigField 'String', 'ALIPAY_APP_ID', '""'
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    sourceSets {
+        main.java.exclude 'com/nanbeiyule/game/CocosLuaBridge.java'
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    implementation 'androidx.annotation:annotation:1.9.1'
+    implementation 'androidx.exifinterface:exifinterface:1.4.1'
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android:6.8.40'
+    implementation 'com.pangle.cn:ads-sdk:6.2.3.5'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.json:json:20250517'
+}

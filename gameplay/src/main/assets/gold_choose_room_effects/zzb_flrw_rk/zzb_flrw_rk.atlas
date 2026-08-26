@@ -1,0 +1,41 @@
+
+zzb_flrw_rk.png
+size: 335, 144
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Img_jb2
+  rotate: false
+  xy: 250, 2
+  size: 82, 68
+  orig: 85, 75
+  offset: 2, 6
+  index: -1
+flrw
+  rotate: false
+  xy: 117, 15
+  size: 131, 38
+  orig: 134, 41
+  offset: 1, 2
+  index: -1
+gt
+  rotate: false
+  xy: 2, 19
+  size: 113, 123
+  orig: 147, 147
+  offset: 16, 9
+  index: -1
+tub
+  rotate: false
+  xy: 117, 55
+  size: 114, 87
+  orig: 116, 117
+  offset: 1, 1
+  index: -1
+xz
+  rotate: false
+  xy: 233, 72
+  size: 100, 70
+  orig: 102, 73
+  offset: 1, 2
+  index: -1

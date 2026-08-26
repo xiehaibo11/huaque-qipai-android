@@ -1,0 +1,55 @@
+
+zzb_jbdt_youxiangtc.png
+size: 654, 726
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+lx
+  rotate: false
+  xy: 503, 106
+  size: 50, 427
+  orig: 50, 427
+  offset: 0, 0
+  index: -1
+lxx
+  rotate: false
+  xy: 1, 1
+  size: 30, 106
+  orig: 30, 106
+  offset: 0, 0
+  index: -1
+lxxx
+  rotate: false
+  xy: 33, 11
+  size: 30, 96
+  orig: 30, 96
+  offset: 0, 0
+  index: -1
+xf11
+  rotate: false
+  xy: 1, 418
+  size: 500, 307
+  orig: 500, 307
+  offset: 0, 0
+  index: -1
+xf22
+  rotate: false
+  xy: 1, 109
+  size: 500, 307
+  orig: 500, 307
+  offset: 0, 0
+  index: -1
+xfhd
+  rotate: false
+  xy: 503, 535
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: -1
+xfxx
+  rotate: false
+  xy: 65, 39
+  size: 60, 68
+  orig: 60, 68
+  offset: 0, 0
+  index: -1

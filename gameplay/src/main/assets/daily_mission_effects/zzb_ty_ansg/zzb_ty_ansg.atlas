@@ -1,0 +1,97 @@
+
+zzb_ty_ansg.png
+size: 1186, 61
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+img/sg/sg_00008
+  rotate: false
+  xy: 1124, 4
+  size: 41, 55
+  orig: 235, 65
+  offset: 4, 6
+  index: -1
+img/sg/sg_00009
+  rotate: false
+  xy: 1013, 3
+  size: 66, 56
+  orig: 235, 65
+  offset: 4, 5
+  index: -1
+img/sg/sg_00010
+  rotate: false
+  xy: 851, 2
+  size: 91, 57
+  orig: 235, 65
+  offset: 4, 4
+  index: -1
+img/sg/sg_00011
+  rotate: false
+  xy: 640, 2
+  size: 115, 57
+  orig: 235, 65
+  offset: 5, 4
+  index: -1
+img/sg/sg_00012
+  rotate: false
+  xy: 2, 2
+  size: 128, 57
+  orig: 235, 65
+  offset: 17, 4
+  index: -1
+img/sg/sg_00013
+  rotate: false
+  xy: 132, 2
+  size: 128, 57
+  orig: 235, 65
+  offset: 42, 4
+  index: -1
+img/sg/sg_00014
+  rotate: false
+  xy: 262, 2
+  size: 128, 57
+  orig: 235, 65
+  offset: 67, 4
+  index: -1
+img/sg/sg_00015
+  rotate: false
+  xy: 392, 2
+  size: 128, 57
+  orig: 235, 65
+  offset: 92, 4
+  index: -1
+img/sg/sg_00016
+  rotate: false
+  xy: 522, 2
+  size: 116, 57
+  orig: 235, 65
+  offset: 117, 4
+  index: -1
+img/sg/sg_00017
+  rotate: false
+  xy: 757, 2
+  size: 92, 57
+  orig: 235, 65
+  offset: 141, 4
+  index: -1
+img/sg/sg_00018
+  rotate: false
+  xy: 944, 2
+  size: 67, 57
+  orig: 235, 65
+  offset: 166, 4
+  index: -1
+img/sg/sg_00019
+  rotate: false
+  xy: 1081, 2
+  size: 41, 57
+  orig: 235, 65
+  offset: 192, 4
+  index: -1
+img/sg/sg_00020
+  rotate: false
+  xy: 1167, 26
+  size: 17, 33
+  orig: 235, 65
+  offset: 216, 5
+  index: -1

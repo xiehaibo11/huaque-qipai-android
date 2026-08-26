@@ -1,0 +1,27 @@
+
+zzb_ty_xzk.png
+size: 128, 139
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+fx01
+  rotate: false
+  xy: 2, 2
+  size: 124, 124
+  orig: 126, 126
+  offset: 1, 1
+  index: -1
+fx03
+  rotate: false
+  xy: 7, 128
+  size: 10, 9
+  orig: 11, 11
+  offset: 1, 1
+  index: -1
+fx04
+  rotate: false
+  xy: 2, 134
+  size: 3, 3
+  orig: 3, 3
+  offset: 0, 0
+  index: -1

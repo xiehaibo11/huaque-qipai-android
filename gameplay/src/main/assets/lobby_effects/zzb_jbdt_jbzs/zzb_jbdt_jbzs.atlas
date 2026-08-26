@@ -1,0 +1,132 @@
+
+zzb_jbdt_jbzs.png
+size: 110, 366
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+jbsg/jbsg_00002
+  rotate: true
+  xy: 69, 223
+  size: 26, 39
+  orig: 554, 294
+  offset: 247, 140
+  index: -1
+jbsg/jbsg_00004
+  rotate: false
+  xy: 69, 169
+  size: 38, 52
+  orig: 554, 294
+  offset: 247, 129
+  index: -1
+jbsg/jbsg_00006
+  rotate: true
+  xy: 2, 95
+  size: 49, 58
+  orig: 554, 294
+  offset: 245, 123
+  index: -1
+jbsg/jbsg_00008
+  rotate: true
+  xy: 2, 146
+  size: 54, 61
+  orig: 554, 294
+  offset: 247, 121
+  index: -1
+jbsg/jbsg_00010
+  rotate: true
+  xy: 2, 252
+  size: 57, 66
+  orig: 554, 294
+  offset: 249, 115
+  index: -1
+jbsg/jbsg_00012
+  rotate: true
+  xy: 2, 311
+  size: 53, 68
+  orig: 554, 294
+  offset: 254, 113
+  index: -1
+jbsg/jbsg_00014
+  rotate: true
+  xy: 2, 202
+  size: 48, 65
+  orig: 554, 294
+  offset: 262, 112
+  index: -1
+jbsg/jbsg_00016
+  rotate: false
+  xy: 70, 251
+  size: 38, 56
+  orig: 554, 294
+  offset: 273, 114
+  index: -1
+jbsg/jbsg_00018
+  rotate: true
+  xy: 65, 143
+  size: 24, 38
+  orig: 554, 294
+  offset: 285, 121
+  index: -1
+zuanshisg/zuanshisg_00002
+  rotate: true
+  xy: 59, 2
+  size: 9, 19
+  orig: 554, 294
+  offset: 241, 150
+  index: -1
+zuanshisg/zuanshisg_00004
+  rotate: true
+  xy: 72, 338
+  size: 26, 36
+  orig: 554, 294
+  offset: 236, 139
+  index: -1
+zuanshisg/zuanshisg_00006
+  rotate: true
+  xy: 59, 49
+  size: 34, 49
+  orig: 554, 294
+  offset: 241, 128
+  index: -1
+zuanshisg/zuanshisg_00008
+  rotate: true
+  xy: 2, 49
+  size: 44, 55
+  orig: 554, 294
+  offset: 243, 124
+  index: -1
+zuanshisg/zuanshisg_00010
+  rotate: false
+  xy: 62, 85
+  size: 44, 56
+  orig: 554, 294
+  offset: 255, 124
+  index: -1
+zuanshisg/zuanshisg_00012
+  rotate: true
+  xy: 2, 3
+  size: 44, 55
+  orig: 554, 294
+  offset: 267, 124
+  index: -1
+zuanshisg/zuanshisg_00014
+  rotate: true
+  xy: 59, 13
+  size: 34, 47
+  orig: 554, 294
+  offset: 279, 130
+  index: -1
+zuanshisg/zuanshisg_00016
+  rotate: true
+  xy: 72, 309
+  size: 27, 35
+  orig: 554, 294
+  offset: 291, 141
+  index: -1
+zuanshisg/zuanshisg_00018
+  rotate: true
+  xy: 80, 2
+  size: 9, 18
+  orig: 554, 294
+  offset: 304, 152
+  index: -1

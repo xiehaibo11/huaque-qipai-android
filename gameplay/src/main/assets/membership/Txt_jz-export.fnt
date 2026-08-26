@@ -1,0 +1,24 @@
+info face="Txt_jz-export" size=32 bold=0 italic=0 charset="" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=1,1
+common lineHeight=72 base=26 scaleW=512 scaleH=256 pages=1 packed=0 alphaChnl=1 redChnl=0 greenChnl=0 blueChnl=0
+page id=0 file="Txt_jz-export.png"
+chars count=18
+char id=48 x=177 y=0 width=55 height=71 xoffset=0 yoffset=1 xadvance=50 page=0 chnl=0 letter="0"
+char id=49 x=288 y=0 width=40 height=71 xoffset=0 yoffset=0 xadvance=41 page=0 chnl=0 letter="1"
+char id=50 x=60 y=174 width=58 height=70 xoffset=0 yoffset=1 xadvance=50 page=0 chnl=0 letter="2"
+char id=51 x=232 y=72 width=55 height=71 xoffset=0 yoffset=1 xadvance=50 page=0 chnl=0 letter="3"
+char id=52 x=120 y=0 width=56 height=71 xoffset=0 yoffset=0 xadvance=50 page=0 chnl=0 letter="4"
+char id=53 x=176 y=144 width=55 height=70 xoffset=0 yoffset=2 xadvance=50 page=0 chnl=0 letter="5"
+char id=54 x=176 y=72 width=55 height=71 xoffset=0 yoffset=1 xadvance=50 page=0 chnl=0 letter="6"
+char id=55 x=233 y=0 width=54 height=69 xoffset=0 yoffset=2 xadvance=50 page=0 chnl=0 letter="7"
+char id=56 x=119 y=115 width=56 height=71 xoffset=0 yoffset=1 xadvance=50 page=0 chnl=0 letter="8"
+char id=57 x=232 y=144 width=55 height=71 xoffset=0 yoffset=1 xadvance=50 page=0 chnl=0 letter="9"
+char id=20803 x=0 y=0 width=61 height=55 xoffset=0 yoffset=17 xadvance=50 page=0 chnl=0 letter="元"
+char id=31036 x=61 y=56 width=58 height=58 xoffset=0 yoffset=14 xadvance=50 page=0 chnl=0 letter="礼"
+char id=21253 x=61 y=115 width=56 height=58 xoffset=0 yoffset=14 xadvance=50 page=0 chnl=0 letter="包"
+char id=36865 x=0 y=115 width=60 height=58 xoffset=0 yoffset=14 xadvance=50 page=0 chnl=0 letter="送"
+char id=20215 x=0 y=174 width=59 height=57 xoffset=0 yoffset=15 xadvance=50 page=0 chnl=0 letter="价"
+char id=20540 x=0 y=56 width=60 height=58 xoffset=0 yoffset=14 xadvance=50 page=0 chnl=0 letter="值"
+char id=32 x=0 y=0 width=0 height=0 xoffset=0 yoffset=0 xadvance=20 page=0 chnl=0 letter=" "
+char id=9 x=0 y=0 width=0 height=0 xoffset=0 yoffset=0 xadvance=160 page=0 chnl=0 letter="	"
+
+kernings count=0

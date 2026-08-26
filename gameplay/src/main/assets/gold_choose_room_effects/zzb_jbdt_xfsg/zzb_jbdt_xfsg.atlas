@@ -1,0 +1,153 @@
+
+zzb_jbdt_xfsg.png
+size: 1819, 316
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+xcsg/xcsg_00001
+  rotate: false
+  xy: 1516, 14
+  size: 207, 31
+  orig: 233, 323
+  offset: 14, 42
+  index: -1
+xcsg/xcsg_00003
+  rotate: false
+  xy: 1076, 26
+  size: 206, 25
+  orig: 233, 323
+  offset: 14, 67
+  index: -1
+xcsg/xcsg_00005
+  rotate: true
+  xy: 1733, 102
+  size: 212, 84
+  orig: 233, 323
+  offset: 10, 36
+  index: -1
+xcsg/xcsg_00007
+  rotate: false
+  xy: 1083, 53
+  size: 213, 107
+  orig: 233, 323
+  offset: 10, 36
+  index: -1
+xcsg/xcsg_00009
+  rotate: false
+  xy: 1516, 47
+  size: 214, 125
+  orig: 233, 323
+  offset: 9, 40
+  index: -1
+xcsg/xcsg_00011
+  rotate: false
+  xy: 1516, 174
+  size: 215, 140
+  orig: 233, 323
+  offset: 9, 46
+  index: -1
+xcsg/xcsg_00013
+  rotate: false
+  xy: 1083, 162
+  size: 215, 152
+  orig: 233, 323
+  offset: 9, 55
+  index: -1
+xcsg/xcsg_00015
+  rotate: false
+  xy: 866, 155
+  size: 215, 159
+  orig: 233, 323
+  offset: 8, 69
+  index: -1
+xcsg/xcsg_00017
+  rotate: false
+  xy: 650, 152
+  size: 214, 162
+  orig: 233, 323
+  offset: 8, 86
+  index: -1
+xcsg/xcsg_00019
+  rotate: false
+  xy: 434, 148
+  size: 214, 166
+  orig: 233, 323
+  offset: 8, 104
+  index: -1
+xcsg/xcsg_00021
+  rotate: false
+  xy: 2, 147
+  size: 214, 167
+  orig: 233, 323
+  offset: 8, 125
+  index: -1
+xcsg/xcsg_00023
+  rotate: false
+  xy: 218, 147
+  size: 214, 167
+  orig: 233, 323
+  offset: 8, 145
+  index: -1
+xcsg/xcsg_00025
+  rotate: false
+  xy: 1300, 164
+  size: 214, 150
+  orig: 233, 323
+  offset: 9, 166
+  index: -1
+xcsg/xcsg_00027
+  rotate: false
+  xy: 1300, 25
+  size: 214, 137
+  orig: 233, 323
+  offset: 9, 181
+  index: -1
+xcsg/xcsg_00029
+  rotate: false
+  xy: 650, 9
+  size: 213, 141
+  orig: 233, 323
+  offset: 10, 177
+  index: -1
+xcsg/xcsg_00031
+  rotate: false
+  xy: 216, 3
+  size: 214, 142
+  orig: 233, 323
+  offset: 10, 177
+  index: -1
+xcsg/xcsg_00033
+  rotate: false
+  xy: 2, 2
+  size: 212, 143
+  orig: 233, 323
+  offset: 11, 176
+  index: -1
+xcsg/xcsg_00035
+  rotate: false
+  xy: 434, 2
+  size: 210, 144
+  orig: 233, 323
+  offset: 12, 174
+  index: -1
+xcsg/xcsg_00037
+  rotate: false
+  xy: 866, 13
+  size: 208, 140
+  orig: 233, 323
+  offset: 13, 176
+  index: -1
+xcsg/xcsg_00039
+  rotate: false
+  xy: 1732, 74
+  size: 20, 26
+  orig: 233, 323
+  offset: 121, 177
+  index: -1
+xcsg/xcsg_00041
+  rotate: true
+  xy: 1076, 14
+  size: 10, 16
+  orig: 233, 323
+  offset: 130, 181
+  index: -1

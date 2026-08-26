@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="real_name_panel">#E5F5F1</color>
+    <color name="real_name_title_text">#09815E</color>
+    <color name="real_name_primary_text">#0C382F</color>
+    <color name="real_name_secondary_text">#4A6B60</color>
+    <color name="real_name_error_text">#C0392B</color>
+    <color name="real_name_input_background">#FFFFFF</color>
+    <color name="real_name_submit_background">#FBE06A</color>
+    <color name="real_name_submit_text">#CD6417</color>
+    <color name="real_name_alipay_background">#1677FF</color>
+    <color name="real_name_alipay_text">#FFFFFF</color>
+    <color name="real_name_close_background">#8AF3BF</color>
+    <color name="real_name_close_text">#1C9765</color>
+    <color name="real_name_badge_background">#5FDEA6</color>
+    <color name="real_name_badge_text">#09815E</color>
+
+    <string name="real_name_title_form">实名认证</string>
+    <string name="real_name_title_verified">实名信息</string>
+    <string name="real_name_hint_name">请输入真实姓名</string>
+    <string name="real_name_hint_id_card">请输入身份证号</string>
+    <string name="real_name_submit">完成</string>
+    <string name="real_name_alipay">支付宝一键实名</string>
+    <string name="real_name_close">关闭</string>
+    <string name="real_name_verified_badge">已认证</string>
+    <string name="real_name_label_name">真实姓名</string>
+    <string name="real_name_label_id_card">身份证号</string>
+    <string name="real_name_notice">根据《关于防止未成年人沉迷网络游戏的通知》，未完成实名认证的账号将无法进入游戏。实名信息仅用于防沉迷与适龄验证，我们会严格保护您的个人信息安全。</string>
+    <string name="real_name_customer_service">如认证有问题，请联系客服解决</string>
+    <string name="real_name_error_name_invalid">请输入正确的真实姓名</string>
+    <string name="real_name_error_id_card_invalid">身份证号格式不正确，请核对后重试</string>
+    <string name="real_name_error_underage">未满十八周岁，无法完成实名认证</string>
+    <string name="real_name_success">实名认证成功</string>
+    <string name="real_name_alipay_unavailable">支付宝实名认证暂不可用，请使用身份证号认证</string>
+</resources>

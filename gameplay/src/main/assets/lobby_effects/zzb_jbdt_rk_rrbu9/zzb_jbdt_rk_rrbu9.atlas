@@ -1,0 +1,293 @@
+
+zzb_jbdt_rk_rrbu9.png
+size: 856, 523
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+DengLongdt_
+  rotate: true
+  xy: 285, 14
+  size: 107, 194
+  orig: 107, 194
+  offset: 0, 0
+  index: -1
+ShenZidt_
+  rotate: false
+  xy: 2, 164
+  size: 281, 357
+  orig: 281, 363
+  offset: 0, 5
+  index: -1
+WenZidt_
+  rotate: false
+  xy: 285, 123
+  size: 245, 125
+  orig: 256, 131
+  offset: 9, 5
+  index: -1
+XiuZiBeiHoudt_
+  rotate: true
+  xy: 2, 2
+  size: 57, 83
+  orig: 57, 83
+  offset: 0, 0
+  index: -1
+YouBianXiuZidt_
+  rotate: true
+  xy: 654, 115
+  size: 67, 98
+  orig: 68, 98
+  offset: 0, 0
+  index: -1
+YouShoudt_
+  rotate: true
+  xy: 771, 202
+  size: 95, 58
+  orig: 95, 58
+  offset: 0, 0
+  index: -1
+ZuoShoudt_
+  rotate: true
+  xy: 532, 118
+  size: 130, 120
+  orig: 130, 120
+  offset: 0, 0
+  index: -1
+coins1
+  rotate: false
+  xy: 784, 3
+  size: 38, 39
+  orig: 40, 40
+  offset: 1, 0
+  index: -1
+coins2
+  rotate: true
+  xy: 481, 15
+  size: 38, 41
+  orig: 40, 47
+  offset: 1, 3
+  index: -1
+coins3
+  rotate: false
+  xy: 818, 419
+  size: 36, 48
+  orig: 40, 51
+  offset: 2, 1
+  index: -1
+coins4
+  rotate: true
+  xy: 524, 18
+  size: 24, 55
+  orig: 40, 59
+  offset: 8, 2
+  index: -1
+coins5
+  rotate: true
+  xy: 191, 21
+  size: 16, 59
+  orig: 40, 62
+  offset: 12, 2
+  index: -1
+coins6
+  rotate: true
+  xy: 133, 3
+  size: 34, 56
+  orig: 40, 59
+  offset: 3, 1
+  index: -1
+coins7
+  rotate: true
+  xy: 792, 44
+  size: 37, 45
+  orig: 40, 55
+  offset: 2, 5
+  index: -1
+coins8
+  rotate: false
+  xy: 818, 379
+  size: 36, 38
+  orig: 40, 50
+  offset: 2, 6
+  index: -1
+fx/Ama_xingxing01
+  rotate: false
+  xy: 677, 13
+  size: 28, 28
+  orig: 32, 32
+  offset: 2, 2
+  index: -1
+fx/caidai1
+  rotate: true
+  xy: 818, 299
+  size: 23, 21
+  orig: 32, 32
+  offset: 5, 6
+  index: -1
+fx/caidai2
+  rotate: true
+  xy: 481, 2
+  size: 11, 20
+  orig: 11, 20
+  offset: 0, 0
+  index: -1
+fx/caidai_cheng
+  rotate: false
+  xy: 620, 256
+  size: 32, 41
+  orig: 32, 41
+  offset: 0, 0
+  index: -1
+fx/caidai_lv
+  rotate: true
+  xy: 253, 32
+  size: 27, 29
+  orig: 27, 29
+  offset: 0, 0
+  index: -1
+fx/caidai_new_23
+  rotate: false
+  xy: 598, 9
+  size: 43, 43
+  orig: 43, 43
+  offset: 0, 0
+  index: -1
+fx/caidai_new_30
+  rotate: false
+  xy: 726, 2
+  size: 56, 44
+  orig: 56, 49
+  offset: 0, 5
+  index: -1
+fx/ccaidai_zi
+  rotate: true
+  xy: 252, 2
+  size: 28, 27
+  orig: 28, 27
+  offset: 0, 0
+  index: -1
+fx/xingxing
+  rotate: true
+  xy: 792, 139
+  size: 61, 62
+  orig: 68, 68
+  offset: 3, 4
+  index: -1
+fx/y_caidai1
+  rotate: true
+  xy: 598, 54
+  size: 62, 53
+  orig: 62, 53
+  offset: 0, 0
+  index: -1
+fx/y_caidai2
+  rotate: true
+  xy: 481, 55
+  size: 66, 41
+  orig: 66, 41
+  offset: 0, 0
+  index: -1
+fx/y_caidai3
+  rotate: false
+  xy: 653, 43
+  size: 71, 70
+  orig: 71, 71
+  offset: 0, 0
+  index: -1
+fx/z_caidai2
+  rotate: true
+  xy: 818, 324
+  size: 53, 34
+  orig: 53, 34
+  offset: 0, 0
+  index: -1
+fx/z_caidai3
+  rotate: false
+  xy: 726, 48
+  size: 64, 65
+  orig: 64, 66
+  offset: 0, 1
+  index: -1
+guangshu_0
+  rotate: true
+  xy: 133, 39
+  size: 20, 118
+  orig: 32, 128
+  offset: 6, 6
+  index: -1
+hongbaodt_
+  rotate: true
+  xy: 818, 469
+  size: 52, 36
+  orig: 54, 38
+  offset: 1, 1
+  index: -1
+lh2dt_
+  rotate: false
+  xy: 620, 299
+  size: 196, 222
+  orig: 353, 298
+  offset: 30, 58
+  index: -1
+lhdt_
+  rotate: false
+  xy: 285, 250
+  size: 333, 271
+  orig: 373, 298
+  offset: 10, 9
+  index: -1
+liang_0
+  rotate: false
+  xy: 754, 157
+  size: 25, 25
+  orig: 29, 29
+  offset: 2, 2
+  index: -1
+star
+  rotate: false
+  xy: 792, 83
+  size: 54, 54
+  orig: 64, 64
+  offset: 5, 5
+  index: -1
+xx
+  rotate: false
+  xy: 654, 184
+  size: 115, 113
+  orig: 142, 125
+  offset: 12, 1
+  index: -1
+xx1
+  rotate: false
+  xy: 524, 44
+  size: 72, 72
+  orig: 112, 104
+  offset: 20, 16
+  index: -1
+xx2
+  rotate: false
+  xy: 581, 27
+  size: 15, 15
+  orig: 54, 48
+  offset: 19, 17
+  index: -1
+yanpi
+  rotate: true
+  xy: 87, 2
+  size: 57, 44
+  orig: 57, 44
+  offset: 0, 0
+  index: -1
+yanzhu1
+  rotate: false
+  xy: 643, 9
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+zuanshidt_
+  rotate: false
+  xy: 2, 61
+  size: 281, 101
+  orig: 283, 105
+  offset: 1, 1
+  index: -1

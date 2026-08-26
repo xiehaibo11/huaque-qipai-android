@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="friend_invite_button">#FBE06A</color>
+    <color name="friend_invite_text">#CD6417</color>
+    <color name="friend_avatar_placeholder">#3A4670</color>
+    <color name="friend_dialog_panel">#232C4E</color>
+    <color name="friend_dialog_title_text">#F6E1AE</color>
+    <color name="friend_dialog_primary_text">#FFFFFF</color>
+    <color name="friend_dialog_secondary_text">#B8C0D8</color>
+    <color name="friend_dialog_input_background">#FFFFFF</color>
+    <color name="friend_dialog_input_text">#101728</color>
+    <color name="friend_dialog_input_hint">#8A8F9E</color>
+    <color name="friend_dialog_error_text">#FF8A7A</color>
+    <color name="friend_dialog_close_background">#3A4670</color>
+    <color name="friend_dialog_close_text">#FFFFFF</color>
+
+    <string name="friend_last_active_hours">%1$d小时前在线</string>
+    <string name="friend_last_active_days">%1$d天前在线</string>
+    <string name="friend_last_active_long">7天前在线</string>
+    <string name="friend_shield_badge">屏</string>
+    <string name="friend_invite">邀请</string>
+    <string name="friend_invite_sent">已邀请</string>
+    <string name="friend_loading">加载中…</string>
+    <string name="friend_action_shield">屏蔽</string>
+    <string name="friend_action_unshield">取消屏蔽</string>
+    <string name="friend_action_delete">删除好友</string>
+    <string name="friend_delete_confirm_title">删除好友</string>
+    <string name="friend_delete_confirm_message">是否删除【%1$s】，将其移出牌友列表？</string>
+    <string name="friend_confirm">确定</string>
+    <string name="friend_cancel">取消</string>
+    <string name="friend_shielded_toast">已屏蔽%1$s</string>
+    <string name="friend_unshielded_toast">已取消屏蔽%1$s</string>
+    <string name="friend_deleted_toast">已删除牌友%1$s</string>
+    <string name="friend_notification_title">牌友消息</string>
+    <string name="friend_notification_invite">%1$s 邀请你一起游戏</string>
+    <string name="friend_notification_reserve">%1$s 预约你的对局</string>
+    <string name="friend_notification_recall">%1$s 召唤你回来一起游戏</string>
+    <!-- Empty-state copy transcribed from the original IMListLayer.csb
+         (_KW_UI_TIPS_NO_FRIEND / _KW_UI_TIPS_NO_TABLE) and from the
+         live 1.5.4 client's recall tab. -->
+    <string name="friend_list_empty">您的牌友列表当前为空，\n赶紧去进行一局游戏，\n增加你的牌友吧</string>
+    <string name="friend_starting_empty">抱歉，当前没找到正在等\n待开局的牌友，可在5s后\n刷新再次查询</string>
+    <string name="friend_recall_empty">暂无可召回牌友\n邀请好友去对局</string>
+    <string name="friend_refresh_list">刷新列表</string>
+    <string name="friend_recall_sent">已向%1$s发送召回</string>
+    <string name="friend_invite_all_none">当前没有可邀请的在线牌友</string>
+    <string name="friend_invite_all_sent">已邀请%1$d位牌友</string>
+    <string name="friend_invite_all_sent_skipped">已邀请%1$d位牌友，%2$d位邀请冷却中已跳过</string>
+    <string name="friend_recall_reward">有奖召回</string>
+    <string name="friend_error_recall_too_frequent">召回过于频繁，请24小时后再试</string>
+    <string name="friend_add_rejected">对方已拒绝你的申请</string>
+    <string name="friend_add_title">添加牌友</string>
+    <string name="friend_add_hint">输入玩家ID或手机号</string>
+    <string name="friend_add_search">搜索</string>
+    <string name="friend_add_apply">添加牌友</string>
+    <string name="friend_add_pending">已申请，等待对方同意</string>
+    <string name="friend_add_already_friend">已是你的牌友</string>
+    <string name="friend_add_empty_query">请输入玩家ID或手机号</string>
+    <string name="friend_application_sent">已发送牌友申请</string>
+    <string name="friend_player_id_format">ID：%1$d</string>
+    <string name="friend_applications_title">好友申请</string>
+    <string name="friend_applications_empty">暂无好友申请</string>
+    <string name="friend_application_accept">同意</string>
+    <string name="friend_application_reject">拒绝</string>
+    <string name="friend_application_row_format">%1$s（ID：%2$d）</string>
+    <string name="friend_close">关闭</string>
+    <string name="friend_error_not_found">未找到该玩家</string>
+    <string name="friend_error_already_friend">对方已经是你的牌友</string>
+    <string name="friend_error_application_exists">已申请，等待对方同意</string>
+    <string name="friend_error_self_operation">不能对自己进行该操作</string>
+    <string name="friend_error_not_friend">对方不是你的牌友</string>
+    <string name="friend_error_invite_too_frequent">邀请过于频繁，请稍后再试</string>
+    <string name="friend_error_generic">请求失败，请稍后重试</string>
+    <string name="friend_error_network">无法连接服务，请检查网络后重试</string>
+    <string name="friend_error_bad_response">服务返回数据格式不正确，请稍后重试</string>
+    <string name="friend_error_unconfigured">服务地址尚未配置</string>
+</resources>

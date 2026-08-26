@@ -1,0 +1,27 @@
+{
+  "uiReplacement": "huaque_gamehall_startup_loading_login",
+  "baseArchitecture": "/Users/mosc/Downloads/逆向/浙江游戏大厅",
+  "styleSource": "/Users/mosc/Downloads/逆向/UI-skill install/花雀棋牌",
+  "canvas": "1920x1080",
+  "replacedAssets": [
+    "res/cocosStudio/hall/Image/login_background.jpg",
+    "res/cocosStudio/hall/Image/huaque_loading_bg.jpg"
+  ],
+  "reusedCocosFiles": [
+    "src/main.lua",
+    "src/app/Launcher.lua",
+    "src/app/MyApp.lua",
+    "src/login/Scene.lua",
+    "src/login/Modules/Login/View.lua",
+    "res/cocosStudio/hall/CSB/Loading.csb",
+    "res/cocosStudio/hall/CSB/LoginScene.csb",
+    "res/cocosStudio/hall/CSB/MainScene.csb",
+    "res/cocosStudio/hall/Image/img_login.plist",
+    "res/cocosStudio/hall/Image/lobby.plist"
+  ],
+  "notes": [
+    "The Android entry now uses org.cocos2dx.lua.AppActivity naming to match the original Zhejiang Game Hall bridge.",
+    "Lua/Cocos resources are staged in assets/src and assets/res using the original search-path architecture.",
+    "The current Gradle shell still renders the startup/loading/login preview in native Android until a full Cocos2dx Java runtime layer is wired."
+  ]
+}

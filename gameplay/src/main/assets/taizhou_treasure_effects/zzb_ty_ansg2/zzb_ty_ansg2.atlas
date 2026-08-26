@@ -1,0 +1,111 @@
+
+zzb_ty_ansg2.png
+size: 1601, 60
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+eff/btn_yellow_00
+  rotate: false
+  xy: 1567, 20
+  size: 32, 38
+  orig: 260, 105
+  offset: 57, 32
+  index: -1
+eff/btn_yellow_01
+  rotate: false
+  xy: 1467, 10
+  size: 57, 48
+  orig: 260, 105
+  offset: 52, 31
+  index: -1
+eff/btn_yellow_02
+  rotate: false
+  xy: 1316, 7
+  size: 81, 51
+  orig: 260, 105
+  offset: 48, 30
+  index: -1
+eff/btn_yellow_03
+  rotate: false
+  xy: 1118, 4
+  size: 105, 54
+  orig: 260, 105
+  offset: 45, 29
+  index: -1
+eff/btn_yellow_04
+  rotate: false
+  xy: 875, 3
+  size: 126, 55
+  orig: 260, 105
+  offset: 46, 29
+  index: -1
+eff/btn_yellow_05
+  rotate: false
+  xy: 597, 2
+  size: 141, 56
+  orig: 260, 105
+  offset: 48, 30
+  index: -1
+eff/btn_yellow_06
+  rotate: false
+  xy: 2, 3
+  size: 150, 55
+  orig: 260, 105
+  offset: 51, 30
+  index: -1
+eff/btn_yellow_07
+  rotate: false
+  xy: 154, 3
+  size: 147, 55
+  orig: 260, 105
+  offset: 55, 30
+  index: -1
+eff/btn_yellow_08
+  rotate: false
+  xy: 303, 4
+  size: 148, 54
+  orig: 260, 105
+  offset: 58, 31
+  index: -1
+eff/btn_yellow_09
+  rotate: false
+  xy: 453, 4
+  size: 142, 54
+  orig: 260, 105
+  offset: 67, 31
+  index: -1
+eff/btn_yellow_10
+  rotate: false
+  xy: 740, 3
+  size: 133, 55
+  orig: 260, 105
+  offset: 79, 31
+  index: -1
+eff/btn_yellow_11
+  rotate: false
+  xy: 1003, 3
+  size: 113, 55
+  orig: 260, 105
+  offset: 102, 31
+  index: -1
+eff/btn_yellow_12
+  rotate: false
+  xy: 1225, 5
+  size: 89, 53
+  orig: 260, 105
+  offset: 123, 31
+  index: -1
+eff/btn_yellow_13
+  rotate: false
+  xy: 1399, 7
+  size: 66, 51
+  orig: 260, 105
+  offset: 142, 32
+  index: -1
+eff/btn_yellow_14
+  rotate: false
+  xy: 1526, 16
+  size: 39, 42
+  orig: 260, 105
+  offset: 163, 38
+  index: -1

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/friend_add_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/friend_dialog_panel"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/friend_add_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:padding="6dp"
+        android:text="@string/friend_add_title"
+        android:textColor="@color/friend_dialog_title_text"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/friend_add_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@color/friend_dialog_input_background"
+        android:fontFamily="sans-serif"
+        android:hint="@string/friend_add_hint"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:maxLength="11"
+        android:padding="10dp"
+        android:textColor="@color/friend_dialog_input_text"
+        android:textColorHint="@color/friend_dialog_input_hint"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/friend_add_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/friend_invite_button"
+        android:fontFamily="sans-serif"
+        android:text="@string/friend_add_search"
+        android:textAllCaps="false"
+        android:textColor="@color/friend_invite_text"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/friend_add_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/friend_dialog_error_text"
+        android:textSize="13sp"
+        android:visibility="gone"
+        tools:text="@string/friend_error_not_found"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/friend_add_result_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/friend_add_result_avatar"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@color/friend_avatar_placeholder"
+                android:contentDescription="@string/friend_add_title" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/friend_add_result_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/friend_dialog_primary_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="PlayerName" />
+
+                <TextView
+                    android:id="@+id/friend_add_result_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/friend_dialog_secondary_text"
+                    android:textSize="13sp"
+                    tools:text="ID: 123456" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/friend_add_result_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:textColor="@color/friend_dialog_secondary_text"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:text="@string/friend_add_pending"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/friend_add_apply"
+            android:layout_width="160dp"
+            android:layout_height="62dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/friend_btn_sure"
+            android:contentDescription="@string/friend_add_apply"
+            android:minWidth="0dp"
+            android:minHeight="0dp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/friend_add_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="14dp"
+        android:background="@color/friend_dialog_close_background"
+        android:fontFamily="sans-serif"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="@string/friend_close"
+        android:textAllCaps="false"
+        android:textColor="@color/friend_dialog_close_text"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+</LinearLayout>

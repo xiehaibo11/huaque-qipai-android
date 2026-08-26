@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#66706d"/>
+    </marker>
+    <style>
+      .title { font: 700 42px "PingFang SC", "Microsoft YaHei", sans-serif; fill: #182522; }
+      .subtitle { font: 400 22px "PingFang SC", "Microsoft YaHei", sans-serif; fill: #63706d; }
+      .lane { font: 600 20px "PingFang SC", "Microsoft YaHei", sans-serif; fill: #51605c; }
+      .node { fill: #ffffff; stroke: #aebbb7; stroke-width: 2; }
+      .node-green { fill: #eaf7f0; stroke: #20845f; stroke-width: 2.5; }
+      .node-blue { fill: #edf5fb; stroke: #377ca5; stroke-width: 2.5; }
+      .node-gold { fill: #fff6dc; stroke: #b88420; stroke-width: 2.5; }
+      .node-red { fill: #fff0ed; stroke: #b95a49; stroke-width: 2.5; }
+      .decision { fill: #fff8e8; stroke: #a8781d; stroke-width: 2.5; }
+      .text { font: 600 21px "PingFang SC", "Microsoft YaHei", sans-serif; fill: #26332f; text-anchor: middle; dominant-baseline: middle; }
+      .small { font: 400 17px "PingFang SC", "Microsoft YaHei", sans-serif; fill: #596762; text-anchor: middle; dominant-baseline: middle; }
+      .label { font: 600 17px "PingFang SC", "Microsoft YaHei", sans-serif; fill: #5b6763; text-anchor: middle; }
+      .line { fill: none; stroke: #66706d; stroke-width: 3; marker-end: url(#arrow); }
+      .dash { fill: none; stroke: #87938f; stroke-width: 2.5; stroke-dasharray: 8 7; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1100" fill="#f7f9f8"/>
+  <rect x="0" y="0" width="1600" height="132" fill="#ffffff"/>
+  <rect x="0" y="130" width="1600" height="2" fill="#dce3e0"/>
+  <text class="title" x="80" y="64">南北娱乐 APP 运行流程图</text>
+  <text class="subtitle" x="80" y="103">启动、协议授权、账号登录、游戏大厅与对局结算</text>
+
+  <rect x="54" y="166" width="190" height="850" rx="8" fill="#edf1ef"/>
+  <text class="lane" x="149" y="218" text-anchor="middle">用户与客户端</text>
+  <text class="lane" x="149" y="508" text-anchor="middle">登录与鉴权</text>
+  <text class="lane" x="149" y="820" text-anchor="middle">大厅与游戏</text>
+  <line x1="85" y1="258" x2="213" y2="258" stroke="#c9d2ce" stroke-width="2"/>
+  <line x1="85" y1="548" x2="213" y2="548" stroke="#c9d2ce" stroke-width="2"/>
+
+  <rect class="node-green" x="310" y="170" width="190" height="66" rx="8"/>
+  <text class="text" x="405" y="203">启动应用</text>
+
+  <path class="line" d="M500 203 H560"/>
+  <rect class="node" x="575" y="170" width="220" height="66" rx="8"/>
+  <text class="text" x="685" y="194">加载启动资源</text>
+  <text class="small" x="685" y="218">检查资源与网络状态</text>
+
+  <path class="line" d="M795 203 H856"/>
+  <polygon class="decision" points="955,155 1055,203 955,251 855,203"/>
+  <text class="small" x="955" y="194">是否需要展示</text>
+  <text class="small" x="955" y="216">协议弹窗？</text>
+
+  <path class="line" d="M955 251 V299"/>
+  <text class="label" x="978" y="278">是</text>
+  <rect class="node-gold" x="830" y="314" width="250" height="72" rx="8"/>
+  <text class="text" x="955" y="340">用户协议与隐私政策</text>
+  <text class="small" x="955" y="365">查看协议并选择同意或拒绝</text>
+
+  <path class="line" d="M1080 350 H1160"/>
+  <text class="label" x="1120" y="338">拒绝</text>
+  <rect class="node-red" x="1175" y="317" width="190" height="66" rx="8"/>
+  <text class="text" x="1270" y="350">退出应用</text>
+
+  <path class="line" d="M955 386 V431 H685 V474"/>
+  <text class="label" x="982" y="417">同意</text>
+  <path class="line" d="M1055 203 H1430 V431 H685 V474"/>
+  <text class="label" x="1101" y="191">否</text>
+
+  <rect class="node-green" x="575" y="489" width="220" height="70" rx="8"/>
+  <text class="text" x="685" y="514">登录页面</text>
+  <text class="small" x="685" y="540">选择微信登录或手机登录</text>
+
+  <path class="line" d="M575 524 H495 V617"/>
+  <text class="label" x="521" y="575">微信登录</text>
+  <rect class="node-blue" x="360" y="632" width="270" height="76" rx="8"/>
+  <text class="text" x="495" y="658">微信授权</text>
+  <text class="small" x="495" y="684">获取一次性授权码</text>
+
+  <path class="line" d="M795 524 H875 V617"/>
+  <text class="label" x="849" y="575">手机登录</text>
+  <rect class="node" x="740" y="632" width="270" height="76" rx="8"/>
+  <text class="text" x="875" y="658">手机号验证</text>
+  <text class="small" x="875" y="684">输入手机号与验证码</text>
+
+  <path class="line" d="M630 670 H680 V754"/>
+  <path class="line" d="M740 670 H690 V754"/>
+  <rect class="node-blue" x="555" y="769" width="270" height="76" rx="8"/>
+  <text class="text" x="690" y="795">后端登录鉴权</text>
+  <text class="small" x="690" y="821">校验身份并建立用户会话</text>
+
+  <path class="dash" d="M555 807 H445 V524 H560"/>
+  <text class="label" x="493" y="795">失败：提示并重试</text>
+
+  <path class="line" d="M825 807 H920"/>
+  <text class="label" x="873" y="793">成功</text>
+  <rect class="node-green" x="935" y="769" width="190" height="76" rx="8"/>
+  <text class="text" x="1030" y="795">进入游戏大厅</text>
+  <text class="small" x="1030" y="821">展示账号与可用玩法</text>
+
+  <path class="line" d="M1125 807 H1185"/>
+  <rect class="node" x="1200" y="769" width="220" height="76" rx="8"/>
+  <text class="text" x="1310" y="795">选择地区与玩法</text>
+  <text class="small" x="1310" y="821">选择房间或快速开始</text>
+
+  <path class="line" d="M1310 845 V891 H1128"/>
+  <rect class="node-gold" x="910" y="876" width="220" height="76" rx="8"/>
+  <text class="text" x="1020" y="902">进入游戏房间</text>
+  <text class="small" x="1020" y="928">匹配玩家并开始对局</text>
+
+  <path class="line" d="M910 914 H850"/>
+  <rect class="node-gold" x="615" y="876" width="220" height="76" rx="8"/>
+  <text class="text" x="725" y="902">进行游戏对局</text>
+  <text class="small" x="725" y="928">同步操作与游戏状态</text>
+
+  <path class="line" d="M615 914 H555"/>
+  <rect class="node-green" x="335" y="876" width="205" height="76" rx="8"/>
+  <text class="text" x="437" y="902">结算结果</text>
+  <text class="small" x="437" y="928">展示本局结果与积分</text>
+
+  <path class="line" d="M437 952 V1000 H1030 V860"/>
+  <text class="label" x="734" y="990">继续游戏或返回大厅</text>
+
+  <text class="subtitle" x="80" y="1060">说明：用户首次启动或协议版本更新时必须同意用户协议与隐私政策；登录成功后方可进入游戏大厅。</text>
+</svg>

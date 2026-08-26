@@ -1,0 +1,27 @@
+
+zzb_ty_xgaung2.png
+size: 725, 260
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+eff/eff_glow_019_lxz
+  rotate: false
+  xy: 260, 26
+  size: 232, 232
+  orig: 256, 256
+  offset: 12, 12
+  index: -1
+eff/eff_other_00
+  rotate: false
+  xy: 494, 29
+  size: 229, 229
+  orig: 256, 256
+  offset: 16, 16
+  index: -1
+eff/fx_tex_other_271
+  rotate: false
+  xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1

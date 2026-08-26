@@ -1,0 +1,27 @@
+
+zzb_jbp_gchd.png
+size: 711, 433
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+gxdicj
+  rotate: false
+  xy: 2, 118
+  size: 577, 313
+  orig: 637, 345
+  offset: 32, 30
+  index: -1
+gxhdcj
+  rotate: true
+  xy: 581, 51
+  size: 380, 128
+  orig: 387, 135
+  offset: 4, 4
+  index: -1
+gxjtcj
+  rotate: false
+  xy: 2, 2
+  size: 684, 47
+  orig: 690, 50
+  offset: 3, 2
+  index: -1

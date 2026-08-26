@@ -1,0 +1,9 @@
+<resources>
+    <color name="water_cyan">#48C7C2</color>
+    <color name="jade_green">#169B7D</color>
+    <color name="deep_emerald">#064A3D</color>
+    <color name="warm_gold">#F5B84B</color>
+    <color name="bright_gold">#FFD76A</color>
+    <color name="cream_white">#FFF4D8</color>
+    <color name="splash_background">#FFFFFF</color>
+</resources>

@@ -1,0 +1,64 @@
+plugins {
+    id 'com.android.application'
+}
+
+def configuredAuthBaseUrl = providers.gradleProperty('AUTH_BASE_URL').orNull
+def configuredLegalBaseUrl = providers.gradleProperty('LEGAL_BASE_URL').orNull
+def productionAuthBaseUrl = 'https://api.nanbeiyule.com'
+if (configuredAuthBaseUrl != null && configuredAuthBaseUrl != productionAuthBaseUrl) {
+    throw new GradleException("AUTH_BASE_URL must be ${productionAuthBaseUrl}")
+}
+def authBaseUrl = configuredAuthBaseUrl ?: productionAuthBaseUrl
+def quotedBuildConfigString = { String value ->
+    '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"'
+}
+
+android {
+    namespace 'com.huaque.ui'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.huaque.ui'
+        minSdk 23
+        targetSdk 35
+        versionCode 1
+        versionName '1.0'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField 'String', 'AUTH_BASE_URL', quotedBuildConfigString(
+                    authBaseUrl)
+            buildConfigField 'String', 'LEGAL_BASE_URL', quotedBuildConfigString(
+                    configuredLegalBaseUrl ?: 'https://www.nanbeiyule.com')
+        }
+        release {
+            buildConfigField 'String', 'AUTH_BASE_URL', quotedBuildConfigString(
+                    authBaseUrl)
+            buildConfigField 'String', 'LEGAL_BASE_URL', quotedBuildConfigString(
+                    configuredLegalBaseUrl ?: 'https://www.nanbeiyule.com')
+        }
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    implementation project(':gameplay')
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android:6.8.40'
+    implementation 'org.luaj:luaj-jse:3.0.1'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.json:json:20250517'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="first_launch_agreement_white">#FFFFFF</color>
+    <color name="first_launch_agreement_title_background">#5FDEA6</color>
+    <color name="first_launch_agreement_title_text">#09815E</color>
+    <color name="first_launch_agreement_panel">#E5F5F1</color>
+    <color name="first_launch_agreement_primary_text">#0C382F</color>
+    <color name="first_launch_agreement_link_text">#FD6F4E</color>
+    <color name="first_launch_agreement_reject_background">#8AF3BF</color>
+    <color name="first_launch_agreement_reject_text">#1C9765</color>
+    <color name="first_launch_agreement_accept_background">#FBE06A</color>
+    <color name="first_launch_agreement_accept_text">#CD6417</color>
+</resources>

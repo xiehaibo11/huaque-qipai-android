@@ -1,0 +1,83 @@
+
+zzb_jbp_icon.png
+size: 761, 315
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Glow_0057
+  rotate: false
+  xy: 494, 119
+  size: 194, 194
+  orig: 256, 256
+  offset: 30, 32
+  index: -1
+eff_glow_03
+  rotate: false
+  xy: 430, 4
+  size: 106, 106
+  orig: 128, 128
+  offset: 11, 11
+  index: -1
+eff_glow_06
+  rotate: false
+  xy: 538, 2
+  size: 115, 115
+  orig: 128, 128
+  offset: 7, 6
+  index: -1
+eff_glow_07
+  rotate: true
+  xy: 2, 20
+  size: 293, 290
+  orig: 512, 512
+  offset: 110, 111
+  index: -1
+glow_6092
+  rotate: true
+  xy: 294, 112
+  size: 201, 198
+  orig: 256, 256
+  offset: 26, 28
+  index: -1
+hl
+  rotate: true
+  xy: 690, 165
+  size: 44, 57
+  orig: 46, 59
+  offset: 1, 1
+  index: -1
+jbp
+  rotate: false
+  xy: 655, 13
+  size: 102, 37
+  orig: 102, 37
+  offset: 0, 0
+  index: -1
+pen
+  rotate: false
+  xy: 294, 4
+  size: 134, 106
+  orig: 136, 113
+  offset: 1, 1
+  index: -1
+yb
+  rotate: false
+  xy: 690, 211
+  size: 69, 41
+  orig: 71, 43
+  offset: 1, 1
+  index: -1
+yy
+  rotate: false
+  xy: 690, 254
+  size: 67, 59
+  orig: 69, 66
+  offset: 1, 6
+  index: -1
+zb
+  rotate: false
+  xy: 655, 52
+  size: 104, 65
+  orig: 105, 70
+  offset: 1, 0
+  index: -1

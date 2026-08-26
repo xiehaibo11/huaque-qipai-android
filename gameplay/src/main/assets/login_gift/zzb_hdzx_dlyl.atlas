@@ -1,0 +1,188 @@
+
+zzb_hdzx_dlyl.png
+size: 1796, 1792
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+bt
+  rotate: false
+  xy: 1469, 851
+  size: 279, 143
+  orig: 281, 145
+  offset: 1, 1
+  index: -1
+bt2
+  rotate: false
+  xy: 660, 85
+  size: 289, 172
+  orig: 291, 174
+  offset: 1, 1
+  index: -1
+d77
+  rotate: true
+  xy: 1237, 311
+  size: 122, 57
+  orig: 124, 59
+  offset: 1, 1
+  index: -1
+di
+  rotate: false
+  xy: 1, 1424
+  size: 1000, 367
+  orig: 1000, 367
+  offset: 0, 0
+  index: -1
+di2
+  rotate: false
+  xy: 1, 1004
+  size: 700, 418
+  orig: 700, 418
+  offset: 0, 0
+  index: -1
+di3
+  rotate: false
+  xy: 703, 1077
+  size: 250, 345
+  orig: 250, 345
+  offset: 0, 0
+  index: -1
+di4
+  rotate: false
+  xy: 1237, 435
+  size: 300, 388
+  orig: 300, 388
+  offset: 0, 0
+  index: -1
+di5
+  rotate: true
+  xy: 1003, 1339
+  size: 452, 582
+  orig: 452, 601
+  offset: 0, 8
+  index: -1
+di55
+  rotate: true
+  xy: 660, 290
+  size: 712, 61
+  orig: 712, 61
+  offset: 0, 0
+  index: -1
+dt
+  rotate: false
+  xy: 723, 259
+  size: 554, 50
+  orig: 554, 50
+  offset: 0, 0
+  index: -1
+eff_light_126_0
+  rotate: false
+  xy: 723, 855
+  size: 220, 220
+  orig: 256, 256
+  offset: 19, 17
+  index: -1
+fx/fx1
+  rotate: false
+  xy: 1, 22
+  size: 389, 392
+  orig: 512, 512
+  offset: 60, 61
+  index: -1
+fx/out_scatterlight
+  rotate: false
+  xy: 955, 825
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+fx/out_starlight
+  rotate: false
+  xy: 723, 311
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+fx/rainbowglow
+  rotate: false
+  xy: 1539, 593
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+guangdian_0
+  rotate: false
+  xy: 1539, 335
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+guangdian_00
+  rotate: false
+  xy: 951, 1
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+qq
+  rotate: false
+  xy: 1408, 59
+  size: 274, 274
+  orig: 276, 276
+  offset: 1, 1
+  index: -1
+qqq
+  rotate: true
+  xy: 1469, 996
+  size: 341, 320
+  orig: 343, 322
+  offset: 1, 1
+  index: -1
+qqqq
+  rotate: true
+  xy: 392, 144
+  size: 270, 67
+  orig: 270, 67
+  offset: 0, 0
+  index: -1
+sidai
+  rotate: false
+  xy: 1, 416
+  size: 529, 586
+  orig: 600, 605
+  offset: 69, 5
+  index: -1
+tt
+  rotate: true
+  xy: 1587, 1405
+  size: 386, 92
+  orig: 388, 94
+  offset: 1, 1
+  index: -1
+zi
+  rotate: true
+  xy: 532, 61
+  size: 941, 126
+  orig: 941, 126
+  offset: 0, 0
+  index: -1
+图层 277145 拷贝
+  rotate: true
+  xy: 1209, 22
+  size: 235, 197
+  orig: 237, 199
+  offset: 1, 1
+  index: -1
+多边形 1 拷贝 4
+  rotate: false
+  xy: 1587, 1343
+  size: 60, 60
+  orig: 62, 62
+  offset: 1, 1
+  index: -1
+多边形 1 拷贝 5
+  rotate: false
+  xy: 1681, 1734
+  size: 57, 57
+  orig: 59, 59
+  offset: 1, 1
+  index: -1

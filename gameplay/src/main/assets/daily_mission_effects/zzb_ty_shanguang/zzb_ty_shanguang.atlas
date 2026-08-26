@@ -1,0 +1,41 @@
+
+zzb_ty_shanguang.png
+size: 712, 257
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+eff/dian1
+  rotate: false
+  xy: 512, 38
+  size: 17, 17
+  orig: 20, 20
+  offset: 2, 1
+  index: -1
+eff/guangdian_0
+  rotate: false
+  xy: 2, 2
+  size: 253, 253
+  orig: 256, 256
+  offset: 1, 1
+  index: -1
+guangdian_0
+  rotate: false
+  xy: 2, 2
+  size: 253, 253
+  orig: 256, 256
+  offset: 1, 1
+  index: -1
+eff_light_126_0
+  rotate: false
+  xy: 512, 57
+  size: 198, 198
+  orig: 256, 256
+  offset: 30, 28
+  index: -1
+guangdian_00
+  rotate: false
+  xy: 257, 2
+  size: 253, 253
+  orig: 256, 256
+  offset: 1, 1
+  index: -1

@@ -1,0 +1,97 @@
+
+zzb_ty_liuhuo.png
+size: 648, 253
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+DDZ_glow_shan
+  rotate: false
+  xy: 2, 2
+  size: 248, 249
+  orig: 256, 256
+  offset: 4, 4
+  index: -1
+huo/huo_00
+  rotate: false
+  xy: 592, 138
+  size: 54, 113
+  orig: 100, 160
+  offset: 18, 20
+  index: -1
+huo/huo_01
+  rotate: true
+  xy: 482, 71
+  size: 54, 115
+  orig: 100, 160
+  offset: 18, 16
+  index: -1
+huo/huo_02
+  rotate: true
+  xy: 491, 15
+  size: 54, 115
+  orig: 100, 160
+  offset: 19, 16
+  index: -1
+huo/huo_03
+  rotate: true
+  xy: 364, 127
+  size: 54, 117
+  orig: 100, 160
+  offset: 20, 16
+  index: -1
+huo/huo_04
+  rotate: true
+  xy: 371, 16
+  size: 53, 118
+  orig: 100, 160
+  offset: 21, 15
+  index: -1
+huo/huo_05
+  rotate: false
+  xy: 536, 132
+  size: 54, 119
+  orig: 100, 160
+  offset: 20, 13
+  index: -1
+huo/huo_06
+  rotate: false
+  xy: 252, 62
+  size: 54, 119
+  orig: 100, 160
+  offset: 19, 13
+  index: -1
+huo/huo_07
+  rotate: false
+  xy: 308, 62
+  size: 54, 119
+  orig: 100, 160
+  offset: 19, 13
+  index: -1
+huo/huo_08
+  rotate: true
+  xy: 252, 6
+  size: 54, 117
+  orig: 100, 160
+  offset: 18, 14
+  index: -1
+huo/huo_09
+  rotate: true
+  xy: 364, 71
+  size: 54, 116
+  orig: 100, 160
+  offset: 18, 16
+  index: -1
+ksg
+  rotate: true
+  xy: 252, 183
+  size: 68, 282
+  orig: 68, 295
+  offset: 0, 6
+  index: -1
+shanguang
+  rotate: false
+  xy: 483, 131
+  size: 50, 50
+  orig: 55, 56
+  offset: 3, 3
+  index: -1

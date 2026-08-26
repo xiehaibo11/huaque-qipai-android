@@ -1,0 +1,48 @@
+
+zzb_ty_tcbk4.png
+size: 260, 714
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+eff_rinbow_001
+  rotate: false
+  xy: 2, 479
+  size: 231, 170
+  orig: 256, 256
+  offset: 13, 42
+  index: -1
+fangsheguang04
+  rotate: false
+  xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+jt
+  rotate: true
+  xy: 2, 693
+  size: 19, 21
+  orig: 19, 21
+  offset: 0, 0
+  index: -1
+p_g_4
+  rotate: false
+  xy: 2, 260
+  size: 221, 217
+  orig: 223, 229
+  offset: 1, 6
+  index: -1
+x_1
+  rotate: false
+  xy: 64, 651
+  size: 61, 61
+  orig: 67, 67
+  offset: 3, 3
+  index: -1
+x_2
+  rotate: false
+  xy: 25, 675
+  size: 37, 37
+  orig: 39, 39
+  offset: 1, 1
+  index: -1
