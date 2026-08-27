@@ -8,7 +8,7 @@ record PersonalCenterPhoneForm(String phoneNumber, String code) {
     static PersonalCenterPhoneForm validated(
             String rawPhoneNumber, String rawCode) {
         String code = rawCode == null ? "" : rawCode.trim();
-        if (!code.matches("\\d{4,8}")) {
+        if (!code.matches("\\d{6}")) {
             throw new IllegalArgumentException("请输入正确的短信验证码");
         }
         return new PersonalCenterPhoneForm(

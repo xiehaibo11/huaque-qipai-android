@@ -24,5 +24,11 @@ public final class PersonalCenterPhoneFormTest {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> PersonalCenterPhoneForm.validated("13800138000", "12"));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> PersonalCenterPhoneForm.validated("13800138000", "12345"));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> PersonalCenterPhoneForm.validated("13800138000", "1234567"));
     }
 }

@@ -246,6 +246,18 @@ abstract class MainActivityRealNameFlow
         createRoomFlow.show(currentHomeState.region().lobbyId(), initialGameId);
     }
 
+    /** 结算后确认「重新匹配队友」：用上一次的档位原地重排（GameManager:onReqPlayerPlace）。 */
+    @Override
+    void rematchGoldRoom(long gameId) {
+        if (currentHomeState == null) {
+            return;
+        }
+        if (goldChooseRoomFlow == null) {
+            goldChooseRoomFlow = new MainActivityGoldChooseRoomFlow(this);
+        }
+        goldChooseRoomFlow.rematchLastLevel(gameId);
+    }
+
     private void showGoldChooseRoom(long gameId) {
         if (currentHomeState == null) {
             return;

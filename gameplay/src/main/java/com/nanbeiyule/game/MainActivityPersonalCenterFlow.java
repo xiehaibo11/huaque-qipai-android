@@ -42,6 +42,83 @@ abstract class MainActivityPersonalCenterFlow
         showPersonalCenter(PersonalCenterView.PHONE_BINDING_TAB);
     }
 
+    @Override
+    protected void promptPhoneBindingAfterWechatLogin() {
+        if (isFinishing()
+                || currentHomeView == null
+                || currentHomeState == null
+                || currentAvatarBitmap == null
+                || personalCenterDialog != null
+                || personalCenterLoading
+                || personalCenterApiClient == null
+                || authSessionCoordinator == null) {
+            return;
+        }
+        personalCenterLoading = true;
+        authSessionCoordinator.execute(
+                (accessToken, callback) ->
+                        personalCenterApiClient.load(
+                                accessToken,
+                                new PersonalCenterApiClient.Callback() {
+                                    @Override
+                                    public void onSuccess(
+                                            PersonalCenterState state) {
+                                        callback.onSuccess(state);
+                                    }
+
+                                    @Override
+                                    public void onUnauthorized() {
+                                        callback.onUnauthorized();
+                                    }
+
+                                    @Override
+                                    public void onError(String message) {
+                                        callback.onError(message);
+                                    }
+                                }),
+                new AuthSessionCoordinator.Callback<
+                        PersonalCenterState>() {
+                    @Override
+                    public void onSuccess(PersonalCenterState state) {
+                        personalCenterLoading = false;
+                        if (isFinishing()
+                                || currentHomeView == null
+                                || currentHomeState == null
+                                || personalCenterDialog != null
+                                || state.account().phoneBound()
+                                || !currentHomeState
+                                        .player()
+                                        .userId()
+                                        .equals(state.player().userId())) {
+                            return;
+                        }
+                        displayPersonalCenter(
+                                state,
+                                PersonalCenterView.PHONE_BINDING_TAB);
+                    }
+
+                    @Override
+                    public void onLoginRequired() {
+                        personalCenterLoading = false;
+                        if (!isFinishing()) {
+                            showLoginPage();
+                        }
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        personalCenterLoading = false;
+                        if (!isFinishing()) {
+                            Toast.makeText(
+                                            MainActivityPersonalCenterFlow.this,
+                                            message,
+                                            Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
+                });
+    }
+
     /** Opens the recovered Zhejiang lobby settings directly from the More menu. */
     @Override
     protected void showPersonalCenterSettings() {
