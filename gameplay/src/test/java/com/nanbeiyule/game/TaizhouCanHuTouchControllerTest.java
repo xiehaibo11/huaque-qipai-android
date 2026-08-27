@@ -45,6 +45,22 @@ public final class TaizhouCanHuTouchControllerTest {
     }
 
     @Test
+    public void secondTapOnSelectedTingTileAcceptsThePressedTileOriginalHitArea() {
+        Fixture fixture = new Fixture();
+
+        assertTrue(
+                fixture.controller.onDown(
+                        fixture.state,
+                        fixture.touchX,
+                        0.0f,
+                        fixture.tile.bottom() + 10.0f));
+
+        assertEquals(1, fixture.listener.playIntents.size());
+        assertEquals(0, fixture.listener.canHuDismissals);
+        assertFalse(fixture.tracker.current().visible());
+    }
+
+    @Test
     public void tapOutsideSelectedTileStillOnlyClosesCanHu() {
         Fixture fixture = new Fixture();
 
@@ -141,7 +157,14 @@ public final class TaizhouCanHuTouchControllerTest {
                 List.of(),
                 List.of(),
                 Optional.empty(),
-                Optional.of(new GameplayTingInfo(1, Map.of(discard, List.of(0x11)))),
+                Optional.of(
+                        new GameplayTingInfo(
+                                1,
+                                false,
+                                true,
+                                Map.of(
+                                        discard,
+                                        List.of(new GameplayTingInfo.HuTarget(0x11, 0, 20))))),
                 null,
                 null,
                 Optional.empty(),
