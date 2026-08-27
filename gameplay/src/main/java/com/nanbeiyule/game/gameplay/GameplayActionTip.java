@@ -6,7 +6,8 @@ package com.nanbeiyule.game.gameplay;
  * (HU). The tip is event-sourced metadata: the table view tracks the cursor to
  * show the matching {@code taizhou_mahjong_action_tip} frame briefly.
  */
-public record GameplayActionTip(GameplayActionTip.Kind kind, long revision, int eventOrder) {
+public record GameplayActionTip(
+        GameplayActionTip.Kind kind, int seatNumber, long revision, int eventOrder) {
     /** Tip kinds mapped to the original {@code onBtnAction.plist} frames. */
     public enum Kind {
         /** {@code act_chi.png}. */
@@ -15,6 +16,8 @@ public record GameplayActionTip(GameplayActionTip.Kind kind, long revision, int 
         PONG,
         /** {@code act_gang.png}. */
         KONG,
+        /** {@code act_gang.png} + original {@code angang} armature. */
+        CONCEALED_KONG,
         /** {@code act_buhua.png}. */
         FLOWER,
         /** {@code eff_hupai.png}. */
@@ -22,7 +25,7 @@ public record GameplayActionTip(GameplayActionTip.Kind kind, long revision, int 
     }
 
     public GameplayActionTip {
-        if (kind == null || revision <= 0 || eventOrder <= 0) {
+        if (kind == null || seatNumber <= 0 || revision <= 0 || eventOrder <= 0) {
             throw new IllegalArgumentException("invalid action tip cursor");
         }
     }

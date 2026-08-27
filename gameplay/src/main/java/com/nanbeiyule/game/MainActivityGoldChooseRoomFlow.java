@@ -31,6 +31,7 @@ final class MainActivityGoldChooseRoomFlow {
     private final GameplayApiClient gameplayApiClient = new GameplayApiClient();
     private final MainActivityGoldRuleFlow ruleFlow;
     private final TimeLoginActApiClient timeLoginApiClient = new TimeLoginActApiClient();
+    private GoldMatchSelectionStore selectionStore;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private GoldChooseRoomDialog dialog;
     private String activeGameDisplayName = "";
@@ -224,6 +225,13 @@ final class MainActivityGoldChooseRoomFlow {
         };
     }
 
+    private GoldMatchSelectionStore selectionStore() {
+        if (selectionStore == null) {
+            selectionStore = new GoldMatchSelectionStore(owner);
+        }
+        return selectionStore;
+    }
+
     private void fail(GoldChooseRoomDialog source, String message) {
         source.setStatusText(message);
         Toast.makeText(owner, message, Toast.LENGTH_LONG).show();
@@ -311,24 +319,49 @@ final class MainActivityGoldChooseRoomFlow {
     }
 
     private void onLevelSelected(GoldRoomLevel level) {
-        GoldChooseRoomDialog source = dialog;
-        if (source == null || owner.currentHomeState == null || level == null) {
+        if (level == null) {
+            return;
+        }
+        joinLevel(dialog, activeLobbyId, activeGameId, level.roomNameFlag());
+    }
+
+    /**
+     * 结算后的「重新匹配队友」：用上一次的大厅/玩法/档位原地重排，
+     * 对应原版 {@code CenterBtns:onStartGameEvent()}。存档缺失时退回档位选择页。
+     */
+    void rematchLastLevel(long gameId) {
+        GoldMatchSelectionStore.Selection selection = selectionStore().load();
+        if (!selection.valid() || owner.currentHomeState == null) {
+            show(gameId);
+            return;
+        }
+        activeLobbyId = selection.lobbyId();
+        activeGameId = selection.gameId();
+        activeGameDisplayName = "";
+        joinLevel(null, selection.lobbyId(), selection.gameId(), selection.roomNameFlag());
+    }
+
+    private void joinLevel(
+            GoldChooseRoomDialog source, long lobbyId, long gameId, int roomNameFlag) {
+        if (owner.currentHomeState == null || owner.authSessionCoordinator == null) {
             return;
         }
         long generation = ++requestGeneration;
-        activeRoomNameFlag = level.roomNameFlag();
-        final long requestLobbyId = activeLobbyId;
-        final long requestGameId = activeGameId;
-        final int requestRoomNameFlag = level.roomNameFlag();
+        activeRoomNameFlag = roomNameFlag;
+        final long requestLobbyId = lobbyId;
+        final long requestGameId = gameId;
+        final int requestRoomNameFlag = roomNameFlag;
         String idempotencyKey = "gold-join-" + UUID.randomUUID();
-        source.setStatusText("正在匹配玩家...");
+        if (source != null) {
+            source.setStatusText("正在匹配玩家...");
+        }
         owner.authSessionCoordinator.execute(
                 (accessToken, callback) ->
                         apiClient.join(
                                 accessToken,
-                                activeLobbyId,
-                                activeGameId,
-                                level.roomNameFlag(),
+                                requestLobbyId,
+                                requestGameId,
+                                requestRoomNameFlag,
                                 idempotencyKey,
                                 forwarding(callback)),
                 new AuthSessionCoordinator.Callback<GoldRoomJoinResponse>() {
@@ -342,6 +375,8 @@ final class MainActivityGoldChooseRoomFlow {
                             return;
                         }
                         dismiss();
+                        selectionStore()
+                                .save(requestLobbyId, requestGameId, requestRoomNameFlag);
                         if (response.roomNumber() != null) {
                             showGoldMatching(response);
                             if (response.autoGameplay()) {
@@ -369,6 +404,10 @@ final class MainActivityGoldChooseRoomFlow {
                             // 响应丢失/超时时占位可能已落库，同样尽力撤位，避免旧占位残留。
                             leaveGoldMatch(
                                     requestLobbyId, requestGameId, requestRoomNameFlag);
+                            return;
+                        }
+                        if (source == null) {
+                            Toast.makeText(owner, message, Toast.LENGTH_LONG).show();
                             return;
                         }
                         fail(source, message);

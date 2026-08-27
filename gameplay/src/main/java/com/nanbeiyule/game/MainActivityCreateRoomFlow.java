@@ -425,7 +425,7 @@ final class MainActivityCreateRoomFlow {
 
     private void openPlacement(RoomPlacement placement) {
         if (placement.gameId() == RoomReentry.WULONG_GAME_ID) owner.openWuLongSession(placement.roomNumber());
-        else owner.openTaizhouMahjongSession(placement.roomNumber());
+        else owner.reenterTaizhouMahjongSession(placement.roomNumber());
     }
 
     private void openShiSanZhangMiniProgram() {

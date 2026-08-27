@@ -295,8 +295,10 @@ final class GameplayRoundProtocol {
     }
 
     /**
-     * Parses the Wave 3 TING_INFO shape {@code {"seat":n,"tingMahs":[...]}} into
-     * the discard→huTargets map; a null body means the field is absent.
+     * Parses the TING_INFO shape
+     * {@code {"seat":n,"showFanNum":b,"showHuNum":b,"tingMahs":[...]}} into the
+     * discard→huTargets map; a null body means the field is absent. Mirrors the
+     * original {@code msgAllWaitInfo} field-for-field.
      */
     static Optional<GameplayTingInfo> parseOptionalTingInfo(JSONObject body)
             throws JSONException {
@@ -304,12 +306,38 @@ final class GameplayRoundProtocol {
             return Optional.empty();
         }
         JSONArray sourceTingMahs = body.getJSONArray("tingMahs");
-        Map<Integer, List<Integer>> huTargets = new LinkedHashMap<>();
+        Map<Integer, List<GameplayTingInfo.HuTarget>> huTargets = new LinkedHashMap<>();
         for (int index = 0; index < sourceTingMahs.length(); index++) {
             JSONObject entry = sourceTingMahs.getJSONObject(index);
-            huTargets.put(entry.getInt("discard"), intList(entry.getJSONArray("huTargets")));
+            huTargets.put(entry.getInt("discard"), huTargetList(entry));
         }
-        return Optional.of(new GameplayTingInfo(body.getInt("seat"), huTargets));
+        return Optional.of(
+                new GameplayTingInfo(
+                        body.getInt("seat"),
+                        body.optBoolean("showFanNum"),
+                        body.optBoolean("showHuNum"),
+                        huTargets));
+    }
+
+    /** {@code nWaitMahs}/{@code nFanPoint}/{@code nHuPoint} 三条平行数组合成一列目标。 */
+    private static List<GameplayTingInfo.HuTarget> huTargetList(JSONObject entry)
+            throws JSONException {
+        List<Integer> tiles = intList(entry.getJSONArray("huTargets"));
+        JSONArray fanPoints = entry.optJSONArray("fanPoints");
+        JSONArray huPoints = entry.optJSONArray("huPoints");
+        List<GameplayTingInfo.HuTarget> targets = new ArrayList<>(tiles.size());
+        for (int index = 0; index < tiles.size(); index++) {
+            targets.add(
+                    new GameplayTingInfo.HuTarget(
+                            tiles.get(index),
+                            point(fanPoints, index),
+                            point(huPoints, index)));
+        }
+        return targets;
+    }
+
+    private static int point(JSONArray points, int index) throws JSONException {
+        return points == null || index >= points.length() ? 0 : points.getInt(index);
     }
 
     /** Reads an optional non-negative count field; absent or JSON null maps to null. */

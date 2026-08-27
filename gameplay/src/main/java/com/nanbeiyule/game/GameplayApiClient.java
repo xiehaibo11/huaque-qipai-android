@@ -35,6 +35,11 @@ final class GameplayApiClient implements GameplayTransport {
 
     private final String baseUrl;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    /**
+     * 吃/碰/出牌/杠/胡命令走独立线程池：轮询快照 GET 与命令 POST 不再互相排队，
+     * 命令最多再等一个正在执行的网络请求（超时 10s），而不是排在整条轮询队列后面。
+     */
+    private final ExecutorService commandExecutor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final AtomicBoolean closed = new AtomicBoolean();
     private final AtomicLong generation = new AtomicLong();
@@ -91,6 +96,7 @@ final class GameplayApiClient implements GameplayTransport {
             Callback<GameplayCommandResult> callback) {
         try {
             request(
+                    commandExecutor,
                     "POST",
                     sessionPath(roomNumber) + "/commands",
                     accessToken,
@@ -143,10 +149,23 @@ final class GameplayApiClient implements GameplayTransport {
         }
         cancelPending();
         executor.shutdownNow();
+        commandExecutor.shutdownNow();
         mainHandler.removeCallbacksAndMessages(null);
     }
 
     private <T> void request(
+            String method,
+            String path,
+            String accessToken,
+            JSONObject body,
+            String idempotencyKey,
+            Callback<T> callback,
+            ResponseParser<T> parser) {
+        request(executor, method, path, accessToken, body, idempotencyKey, callback, parser);
+    }
+
+    private <T> void request(
+            ExecutorService pool,
             String method,
             String path,
             String accessToken,
@@ -169,7 +188,7 @@ final class GameplayApiClient implements GameplayTransport {
         pruneFinished();
         try {
             pending.add(
-                    executor.submit(
+                    pool.submit(
                             () ->
                                     execute(
                                             method,

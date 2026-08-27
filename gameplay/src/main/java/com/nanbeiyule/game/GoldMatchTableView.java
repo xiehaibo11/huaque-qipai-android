@@ -57,7 +57,7 @@ final class GoldMatchTableView extends AdaptiveCanvasView {
     private final Bitmap healthGame;
     private final Bitmap menu;
     private final Bitmap trust;
-    private final Bitmap fortune;
+    private final Bitmap ting;
     private final Paint bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private final Paint batteryPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private final Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -106,7 +106,7 @@ final class GoldMatchTableView extends AdaptiveCanvasView {
         trust =
                 BitmapFactory.decodeResource(
                         getResources(), R.drawable.taizhou_mahjong_game_layer2_head_trust);
-        fortune = BitmapFactory.decodeResource(getResources(), R.drawable.taizhou_mahjong_fortune);
+        ting = TaizhouMahjongGameLayerBitmap.extract(gameLayerAtlas, "mah_ting_btn.png");
         batteryManager = (BatteryManager) context.getSystemService(Context.BATTERY_SERVICE);
         typeface = Typeface.createFromAsset(context.getAssets(), "fonts/fangzhengcuyuan.ttf");
         textPaint.setTypeface(typeface);
@@ -161,7 +161,7 @@ final class GoldMatchTableView extends AdaptiveCanvasView {
         drawScoreChrome(canvas);
         drawCentered(canvas, trust, TRUST_CENTER_X, TRUST_CENTER_Y, TRUST_WIDTH, TRUST_HEIGHT);
         drawNode(canvas, menu, TaizhouMahjongWaitingLayout.MENU_BUTTON);
-        drawNode(canvas, fortune, TaizhouMahjongWaitingLayout.FORTUNE_BUTTON);
+        drawNode(canvas, ting, TaizhouMahjongWaitingLayout.TING_BUTTON);
     }
 
     /**

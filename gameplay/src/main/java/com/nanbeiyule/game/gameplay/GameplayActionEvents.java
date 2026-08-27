@@ -87,6 +87,7 @@ final class GameplayActionEvents {
                     Optional.of(
                             new GameplayActionTip(
                                     tipKind(meld.combType()),
+                                    meld.seat(),
                                     event.revision(),
                                     event.eventOrder())));
         } catch (RuntimeException | JSONException exception) {
@@ -123,6 +124,7 @@ final class GameplayActionEvents {
                     Optional.of(
                             new GameplayActionTip(
                                     GameplayActionTip.Kind.FLOWER,
+                                    seat,
                                     event.revision(),
                                     event.eventOrder())));
         } catch (RuntimeException | JSONException exception) {
@@ -136,24 +138,31 @@ final class GameplayActionEvents {
      * {@code endPlayerState} payload member is ignored by the projection.
      */
     static GameplayTableState applyWinDeclared(GameplayTableState state, GameplayEvent event) {
-        return state.withActionLayer(
-                event.revision(),
-                event.eventOrder(),
-                Optional.empty(),
-                state.melds(),
-                state.flowers(),
-                Optional.of(
-                        new GameplayActionTip(
-                                GameplayActionTip.Kind.HU,
-                                event.revision(),
-                                event.eventOrder())))
-                .withoutPlayPermission(event.revision(), event.eventOrder());
+        try {
+            int winnerSeat = event.payload().getInt("winnerSeat");
+            return state.withActionLayer(
+                    event.revision(),
+                    event.eventOrder(),
+                    Optional.empty(),
+                    state.melds(),
+                    state.flowers(),
+                    Optional.of(
+                            new GameplayActionTip(
+                                    GameplayActionTip.Kind.HU,
+                                    winnerSeat,
+                                    event.revision(),
+                                    event.eventOrder())))
+                    .withoutPlayPermission(event.revision(), event.eventOrder());
+        } catch (RuntimeException | JSONException exception) {
+            throw new GameplayResyncRequiredException("Win declared payload is invalid");
+        }
     }
 
     private static GameplayActionTip.Kind tipKind(MahjongCombType combType) {
         return switch (combType) {
             case CHOW -> GameplayActionTip.Kind.CHOW;
             case PONG -> GameplayActionTip.Kind.PONG;
+            case CONCEALED_KONG -> GameplayActionTip.Kind.CONCEALED_KONG;
             default -> GameplayActionTip.Kind.KONG;
         };
     }

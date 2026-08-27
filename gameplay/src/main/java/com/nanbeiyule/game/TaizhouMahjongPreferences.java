@@ -36,14 +36,14 @@ record TaizhouMahjongPreferences(
     }
 
     static TaizhouMahjongPreferences defaults() {
-        // Area 7109 defaults to dialect audio and double-click confirmation for real play.
+        // 原版 UIMahConfig2D.MahSettingDefault[PlayType] 默认 SINGLE_CLICK。
         // 原版 HAVE_TING 默认开启、出牌轨迹（configTab.MahIsHaveTrace=4）与纯净模式
         // （configTab.ClearModel=10）默认关闭：麻将 1.0.0.687 基类 SettingData 的
         // _curDefault 赋值未随文件归档（反编译缺口），默认值以金币包同脉
         // MahXueLiu SettingData.lua:87 defaultCfg={100,1,100,0,2,1,1,1,1,0,1,1,2}
         // 的第 4/9/10 位（0/1/0）为准——标注为同级证据，非 30109 直接证据。
         return new TaizhouMahjongPreferences(
-                true, TaizhouMahjongPlayGesture.Mode.DOUBLE_CLICK, true, false, false);
+                true, TaizhouMahjongPlayGesture.Mode.SINGLE_CLICK, true, false, false);
     }
 
     TaizhouMahjongPreferences withDialectEnabled(boolean enabled) {

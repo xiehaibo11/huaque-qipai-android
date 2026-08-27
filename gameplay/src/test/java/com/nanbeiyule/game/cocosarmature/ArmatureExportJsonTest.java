@@ -14,10 +14,18 @@ public final class ArmatureExportJsonTest {
     private static final Path TRUST_ARMATURE =
             Path.of(
                     "src/main/assets/taizhou_trust_effects/tuoguan_ani/ios_tuoguan.ExportJson");
+    private static final Path DICE_ARMATURE =
+            Path.of(
+                    "src/main/assets/taizhou_mahjong_dice_effects/saizi_ani/saizi_ani.ExportJson");
 
     private static ArmatureData trustArmature() throws Exception {
         return ArmatureExportJson.parse(
                 new String(Files.readAllBytes(TRUST_ARMATURE), StandardCharsets.UTF_8));
+    }
+
+    private static ArmatureData diceArmature() throws Exception {
+        return ArmatureExportJson.parse(
+                new String(Files.readAllBytes(DICE_ARMATURE), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -59,5 +67,31 @@ public final class ArmatureExportJsonTest {
         assertEquals(0.5f, text.anchorX(), 0.0f);
         assertEquals(0.5f, text.anchorY(), 0.0f);
         assertEquals(840.0f, text.width(), 0.0f);
+    }
+
+    @Test
+    public void readsTheOriginalDiceMovementsAndDisplays() throws Exception {
+        ArmatureData data = diceArmature();
+
+        assertEquals("saizi_ani", data.name());
+        assertEquals(35, data.movement("loop").durationFrames());
+        for (int value = 1; value <= 6; value++) {
+            assertEquals(1, data.movement(String.valueOf(value)).durationFrames());
+        }
+        assertEquals(
+                List.of(
+                        "saizi/sz_7.png",
+                        "saizi/sz_8.png",
+                        "saizi/sz_9.png",
+                        "saizi/sz_10.png",
+                        "saizi/sz_11.png",
+                        "saizi/sz_12.png",
+                        "saizi/sz_1.png",
+                        "saizi/sz_2.png",
+                        "saizi/sz_3.png",
+                        "saizi/sz_4.png",
+                        "saizi/sz_5.png",
+                        "saizi/sz_6.png"),
+                data.bones().get(0).displays());
     }
 }

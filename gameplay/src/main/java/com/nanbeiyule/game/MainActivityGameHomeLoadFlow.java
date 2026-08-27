@@ -186,10 +186,13 @@ abstract class MainActivityGameHomeLoadFlow extends MainActivityLoadingFlow {
                             LoginLoadingStageGate.NO_TOKEN;
                     displayGameHome(state);
                     finishWechatLoadingRequest();
+                    promptPhoneBindingAfterWechatLogin();
                 })) {
             cancelWechatPostAuthTransition();
         }
     }
+
+    protected void promptPhoneBindingAfterWechatLogin() {}
 
     protected void loadGameHome() {
         if (isFinishing()

@@ -174,7 +174,14 @@ final class TaizhouWaitingToolsFlow {
                                 requestTrust.run();
                             }
                         });
-        showDialog(next);
+        // View.lua:onBtnClose 关面板时重新下发已保存的配置，保证牌桌与存档一致。
+        showDialog(
+                next,
+                () -> {
+                    if (tableView != null) {
+                        tableView.applyStyle(styleStore.load());
+                    }
+                });
     }
 
     void showReservation(TaizhouRoomToolType type) {
@@ -340,11 +347,18 @@ final class TaizhouWaitingToolsFlow {
     }
 
     private void showDialog(Dialog next) {
+        showDialog(next, null);
+    }
+
+    private void showDialog(Dialog next, Runnable onDismissed) {
         dismissDialog();
         dialog = next;
         next.setOnDismissListener(
                 ignored -> {
                     if (dialog == next) dialog = null;
+                    if (onDismissed != null) {
+                        onDismissed.run();
+                    }
                     owner.applyImmersiveMode();
                 });
         next.show();

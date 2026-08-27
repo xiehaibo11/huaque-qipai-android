@@ -160,6 +160,14 @@ abstract class MainActivityGameHomeDisplayFlow extends MainActivityGameHomeLoadF
     }
 
     protected void openTaizhouMahjongSession(String roomNumber) { taizhouMahjongFlow.open(roomNumber); }
+
+    /** 返场（原版断线重连）进桌，进桌后要按 onReqPlayerPlace 判断这一局是否已经结束。 */
+    protected void reenterTaizhouMahjongSession(String roomNumber) {
+        taizhouMahjongFlow.open(roomNumber, true);
+    }
+
+    /** 结算后「重新匹配队友」，由接了金币场流程的子类覆写。 */
+    void rematchGoldRoom(long gameId) {}
     protected void openWuLongSession(String roomNumber) { wuLongFlow.open(roomNumber); }
 
     @Override

@@ -38,10 +38,6 @@ final class GameplayEventPlaybackGate {
      * 检查（time+1）是周边功能，无对应实现。
      */
     static final long SETTLE_WINDOW_PLAYBACK_MILLIS = 1_000L;
-    private static final long MIN_TURN_ADVANCED_PLAYBACK_MILLIS = 8_000L;
-    /** 与后端 QaBotThinkingRhythm 的假人思考上限 15000ms 对齐，避免钳短服务端节奏。 */
-    private static final long MAX_TURN_ADVANCED_PLAYBACK_MILLIS = 15_000L;
-
     interface Scheduler {
         void postDelayed(Runnable task, long delayMillis);
     }
@@ -118,6 +114,16 @@ final class GameplayEventPlaybackGate {
             List<GameplayEvent> events,
             boolean finishesCommand,
             Callback callback) {
+        accept(generation, current, events, finishesCommand, callback, null);
+    }
+
+    private void accept(
+            long generation,
+            GameplayTableState current,
+            List<GameplayEvent> events,
+            boolean finishesCommand,
+            Callback callback,
+            String releasedSelfDelayedType) {
         if (!callback.isCurrent(generation)) {
             return;
         }
@@ -141,7 +147,7 @@ final class GameplayEventPlaybackGate {
             batch = unapplied(current, events);
             finishesPendingCommand = finishesCommand;
         }
-        Split split = playbackSplit(current, batch);
+        Split split = playbackSplit(current, batch, releasedSelfDelayedType);
         if (split == null) {
             applyAndReport(generation, current, batch, finishesPendingCommand, callback);
             return;
@@ -153,14 +159,26 @@ final class GameplayEventPlaybackGate {
                 // 原版 isIncludeSelf=true 语义：延迟中的队头协议（如 TAKE_FIRST 的 msgGameStep）
                 // 尚未执行，不派发任何回调，UI 维持上一拍画面直到计时结束。
                 GameplayTableState unchanged = apply(current, List.of());
-                Pending queued = new Pending(generation, unchanged, suffix, finishesPendingCommand, callback);
+                Pending queued = new Pending(
+                        generation,
+                        unchanged,
+                        suffix,
+                        finishesPendingCommand,
+                        callback,
+                        split.selfDelayedType());
                 pending = queued;
                 scheduler.postDelayed(() -> flush(queued), split.delayMillis());
                 return;
             }
             GameplayTableState next = apply(current, prefix);
             callback.onAccepted(next, prefix, false);
-            Pending queued = new Pending(generation, next, suffix, finishesPendingCommand, callback);
+            Pending queued = new Pending(
+                    generation,
+                    next,
+                    suffix,
+                    finishesPendingCommand,
+                    callback,
+                    split.selfDelayedType());
             pending = queued;
             scheduler.postDelayed(() -> flush(queued), split.delayMillis());
         } catch (GameplayResyncRequiredException exception) {
@@ -180,7 +198,8 @@ final class GameplayEventPlaybackGate {
                     queued.state,
                     queued.events,
                     queued.finishesCommand,
-                    queued.callback);
+                    queued.callback,
+                    queued.selfDelayedType);
         }
     }
 
@@ -247,48 +266,38 @@ final class GameplayEventPlaybackGate {
      * 发牌定格 1s 的原版节奏。原版永不延迟的 msgPlayCount/msgCurPanShu/msgQuanCount
      * 在本工程没有独立事件（计数并入快照），无需豁免名单。
      */
-    private static Split playbackSplit(GameplayTableState current, List<GameplayEvent> events) {
+    private static Split playbackSplit(
+            GameplayTableState current, List<GameplayEvent> events, String releasedSelfDelayedType) {
         for (int index = 0; index < events.size() - 1; index++) {
             String type = events.get(index).type();
+            if (index == 0 && type.equals(releasedSelfDelayedType)) {
+                continue;
+            }
             if ("WALL_SHUFFLED".equals(type)) {
-                return new Split(index + 1, SHUFFLE_PLAYBACK_MILLIS);
+                return new Split(index + 1, SHUFFLE_PLAYBACK_MILLIS, null);
             }
             if ("DICE_ROLLED".equals(type)) {
-                return new Split(index + 1, THROW_CHIP_PLAYBACK_MILLIS);
+                return new Split(index + 1, THROW_CHIP_PLAYBACK_MILLIS, null);
+            }
+            if ("TURN_ADVANCED".equals(type) && isNonSelfTurn(current, events.get(index))) {
+                return new Split(index + 1, TURN_ADVANCED_PLAYBACK_MILLIS, null);
             }
             if ("DEALT".equals(type)) {
-                return new Split(index, TAKE_FIRST_PLAYBACK_MILLIS);
+                return new Split(index, TAKE_FIRST_PLAYBACK_MILLIS, type);
             }
             if ("ROUND_RESULT_READY".equals(type)) {
-                return new Split(index, SETTLE_WINDOW_PLAYBACK_MILLIS);
-            }
-            long turnDelay = turnAdvancedDelayMillis(current, events.get(index));
-            if (turnDelay > 0L) {
-                return new Split(index + 1, turnDelay);
+                return new Split(index, SETTLE_WINDOW_PLAYBACK_MILLIS, type);
             }
         }
         return null;
     }
 
-    private static long turnAdvancedDelayMillis(
-            GameplayTableState current, GameplayEvent event) {
-        if (!"TURN_ADVANCED".equals(event.type())) {
-            return 0L;
+    private static boolean isNonSelfTurn(GameplayTableState current, GameplayEvent event) {
+        if (current == null) {
+            return false;
         }
-        org.json.JSONObject payload = event.payload();
-        if (!payload.has("activeSeat") || !payload.has("clockRemainingSeconds")) {
-            return 0L;
-        }
-        if (payload.isNull("activeSeat") || payload.isNull("clockRemainingSeconds")) {
-            return 0L;
-        }
-        if (payload.optInt("activeSeat", current.mySeat()) == current.mySeat()) {
-            return 0L;
-        }
-        long requested = payload.optLong("playbackDelayMillis", TURN_ADVANCED_PLAYBACK_MILLIS);
-        return Math.max(
-                MIN_TURN_ADVANCED_PLAYBACK_MILLIS,
-                Math.min(MAX_TURN_ADVANCED_PLAYBACK_MILLIS, requested));
+        int activeSeat = event.payload().optInt("activeSeat", current.mySeat());
+        return activeSeat > 0 && activeSeat != current.mySeat();
     }
 
     private record Pending(
@@ -296,8 +305,9 @@ final class GameplayEventPlaybackGate {
             GameplayTableState state,
             List<GameplayEvent> events,
             boolean finishesCommand,
-            Callback callback) {}
+            Callback callback,
+            String selfDelayedType) {}
 
     /** Count of leading events applied before the delay; the rest wait it out. */
-    private record Split(int immediateCount, long delayMillis) {}
+    private record Split(int immediateCount, long delayMillis, String selfDelayedType) {}
 }

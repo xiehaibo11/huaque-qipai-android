@@ -35,8 +35,13 @@ final class MainActivityTaizhouMahjongFlow {
     private TaizhouMahjongTableView activeTableView;
     private FrameLayout activeTableContainer;
     private GameplayTableState latestState;
+    private boolean reentry;
+
+    /** {@code GameManager.lua:413} 的原文。 */
+    private static final String REMATCH_MESSAGE = "游戏已结束，是否为您重新匹配队友？";
     private TaizhouEarlyStartDialog earlyStartDialog;
     private TaizhouMahjongSoundPlayer roundSoundPlayer;
+    private TaizhouVoiceLoadState voiceLoadState;
     private final Set<String> avatarRequests = new HashSet<>();
     private final TaizhouMahjongLoadPolicy loadPolicy = new TaizhouMahjongLoadPolicy(false);
     private final Handler snapshotRefreshHandler = new Handler(Looper.getMainLooper());
@@ -63,10 +68,21 @@ final class MainActivityTaizhouMahjongFlow {
     }
 
     void open(String roomNumber) {
+        open(roomNumber, false);
+    }
+
+    /** {@code reentry} 对应原版的断线重连（{@code GameManager:onRelink}）。 */
+    void open(String roomNumber, boolean reentry) {
+        openSession(roomNumber, reentry);
+    }
+
+    private void openSession(String roomNumber, boolean reentering) {
         if (owner.isFinishing() || owner.authSessionCoordinator == null) {
             return;
         }
         close();
+        // close() 会清掉这个标记，必须在它之后再置位。
+        reentry = reentering;
         coordinator = AuthenticatedCocosSessionLauncher.openIfRequested(owner, roomNumber);
         if (coordinator != null) return;
         if (owner.loginRequestLoadingController != null) {
@@ -172,6 +188,7 @@ final class MainActivityTaizhouMahjongFlow {
                         soundPlayer::playAll,
                         audioSettings == null || audioSettings.maleVoice());
         roundSoundPlayer = soundPlayer;
+        preloadRoundVoices(tableView, soundPlayer);
         coordinator =
                 new GameplaySessionCoordinator(
                         owner.authSessionCoordinator,
@@ -179,6 +196,7 @@ final class MainActivityTaizhouMahjongFlow {
                             @Override
                             public void onState(GameplayTableState state) {
                                 latestState = state;
+                                checkFinishedGoldMatchOnReentry(state);
                                 if (state.phase() != GameplayPhase.WAITING) {
                                     owner.hideTableFriendDrawer();
                                 }
@@ -245,6 +263,7 @@ final class MainActivityTaizhouMahjongFlow {
         activeTableView = null;
         activeTableContainer = null;
         latestState = null;
+        reentry = false;
         avatarRequests.clear();
         roomToolsCoordinator.close();
         trustCoordinator.close();
@@ -285,6 +304,42 @@ final class MainActivityTaizhouMahjongFlow {
                         }
                     });
         }
+    }
+
+    /** Activity attach 前取不到 Context，语音缓存延迟到进牌局首次使用时创建。 */
+    private TaizhouVoiceLoadState voiceLoadState() {
+        if (voiceLoadState == null) {
+            voiceLoadState = TaizhouVoiceLoadState.create(owner);
+        }
+        return voiceLoadState;
+    }
+
+    private void preloadRoundVoices(
+            TaizhouMahjongTableView tableView, TaizhouMahjongSoundPlayer soundPlayer) {
+        TaizhouMahjongVoiceCatalog.VoicePackage voicePackage =
+                TaizhouMahjongVoiceCatalog.firstLoadPackage();
+        TaizhouVoiceLoadState.ResourceDirectory voiceDirectory =
+                new TaizhouVoiceLoadState.AndroidResourceDirectory(soundPlayer, owner.getAssets());
+        boolean showProgress = voiceLoadState().shouldShowProgress(voicePackage, voiceDirectory);
+        if (showProgress) {
+            tableView.startVoiceLoadProgress();
+        }
+        soundPlayer.preload(
+                voicePackage.rawResourceNames(),
+                (loaded, total) ->
+                        owner.runOnUiThread(
+                                () -> {
+                                    if (activeTableView == tableView
+                                            && roundSoundPlayer == soundPlayer) {
+                                        if (total > 0 && loaded >= total) {
+                                            voiceLoadState()
+                                                    .markLoaded(voicePackage, voiceDirectory);
+                                        }
+                                        if (showProgress) {
+                                            tableView.setVoiceLoadProgress(loaded, total);
+                                        }
+                                    }
+                                }));
     }
 
     private void loadRecordAccess(TaizhouMahjongTableView tableView) {
@@ -560,6 +615,35 @@ final class MainActivityTaizhouMahjongFlow {
 
     private void showCaishen() {
         fortuneApiClient.showCaishen();
+    }
+
+    /**
+     * 断线重连/重开应用后进到一局已经结束的金币匹配场：原版
+     * {@code GameBase/GameManager.lua:onRelink → onReqPlayerPlace} 在 {@code is50Match()}
+     * 时弹 {@code TIP_LAYER_TYPE.OK}「游戏已结束，是否为您重新匹配队友？」，确认后
+     * {@code CenterBtns:onStartGameEvent()} 重新入队。只在进桌后的第一份权威状态上判断，
+     * 正常打完一局走结算页，不弹这个。
+     */
+    private void checkFinishedGoldMatchOnReentry(GameplayTableState state) {
+        if (!reentry) {
+            return;
+        }
+        reentry = false;
+        if (!TaizhouMahjongWaitingProjection.isGoldRoom(state)
+                || (state.phase() != GameplayPhase.COMPLETED
+                        && state.phase() != GameplayPhase.DISSOLVED)) {
+            return;
+        }
+        long gameId = state.gameId();
+        new TaizhouTipDialog(
+                        owner,
+                        REMATCH_MESSAGE,
+                        () -> {
+                            // 先回到大厅态再入队，匹配面板要挂在游戏首页上。
+                            leaveTable();
+                            owner.rematchGoldRoom(gameId);
+                        })
+                .show();
     }
 
     private void leaveTable() {

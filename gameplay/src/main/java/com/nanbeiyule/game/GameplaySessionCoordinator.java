@@ -306,10 +306,10 @@ final class GameplaySessionCoordinator {
     /**
      * 命令受理后立即消费应答自带的权威事件，省掉一次 {@code GET /events} 往返。
      *
-     * <p>事件仍然全部经过 {@link GameplayEventPlaybackGate}，假人回合的 {@code playbackDelayMillis}
-     * 节奏不变；{@code GameplayReducer} 按 {@code (revision, eventOrder)} 判重，所以随后轮询到的
-     * 同一批事件不会被二次应用。这不是乐观更新：客户端没有本地移牌，只是把服务端已经算好的
-     * 权威事件立刻用上。旧版本后端不带事件时退回原来的补拉路径。
+     * <p>事件仍然全部经过 {@link GameplayEventPlaybackGate}，只保留原版洗牌/骰子/发牌/结算动画
+     * 等待；{@code GameplayReducer} 按 {@code (revision, eventOrder)} 判重，所以随后轮询到的同一批
+     * 事件不会被二次应用。这不是乐观更新：客户端没有本地移牌，只是把服务端已经算好的权威事件立刻用上。
+     * 旧版本后端不带事件时退回原来的补拉路径。
      */
     private void applyCommandEvents(long requestGeneration, GameplayCommandResult result) {
         if (result == null || result.events().isEmpty()) {
@@ -373,8 +373,8 @@ final class GameplaySessionCoordinator {
                         if (!isCurrent(requestGeneration)) {
                             return;
                         }
-                        // 事件回放中的快照一律丢弃：快照只有最终态，应用它会把假人回合的
-                        // playbackDelayMillis 节奏和牌局音频整段跳过，随后门控刷新还会把画面倒回去。
+                        // 事件回放中的快照一律丢弃：快照只有最终态，应用它会把当前动画和牌局音频整段跳过，
+                        // 随后门控刷新还会把画面倒回去。
                         // 这一拍由 MainActivityTaizhouMahjongFlow 的轮询自行续期，不会停摆。
                         if (!finishesCommand && eventPlaybackGate.busy()) {
                             return;

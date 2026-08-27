@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import com.nanbeiyule.game.mahjong.TaizhouMahjongPlayGesture;
 import org.junit.Test;
 
 public final class ZhejiangLobbySettingsTest {
@@ -17,6 +18,13 @@ public final class ZhejiangLobbySettingsTest {
         assertEquals(100, settings.soundVolume());
         assertEquals(50, settings.voiceVolume());
         assertTrue(settings.maleVoice());
+    }
+
+    @Test
+    public void taizhouMahjongDefaultsUseOriginalSingleClickDiscardMode() {
+        assertEquals(
+                TaizhouMahjongPlayGesture.Mode.SINGLE_CLICK,
+                TaizhouMahjongPreferences.defaults().playMode());
     }
 
     @Test
