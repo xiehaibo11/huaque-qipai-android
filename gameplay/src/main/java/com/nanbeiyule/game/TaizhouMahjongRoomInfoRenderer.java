@@ -13,11 +13,15 @@ import android.os.BatteryManager;
 import com.nanbeiyule.game.gameplay.GameplayTableState;
 import com.nanbeiyule.game.mahjong.TaizhouMahjongRoomInfoLayout;
 import java.text.SimpleDateFormat;
+import com.nanbeiyule.game.mahjong.TaizhouMahjongWaitingProjection;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Locale;
 
 /** Draws RoomInfoLayerMajiang.csb and the evidenced part of RoomCenterInfoLayer.csb. */
 final class TaizhouMahjongRoomInfoRenderer {
+    private static final Pattern BASE_SCORE = Pattern.compile("底分(\\d+)");
     private static final String OK_GESTURE = "\uD83D\uDC4C";
     private final Bitmap systemBackground;
     private final Bitmap wifi;
@@ -82,15 +86,22 @@ final class TaizhouMahjongRoomInfoRenderer {
         drawBattery(canvas, currentBatteryPercent());
 
         drawSprite(canvas, roomBackground, TaizhouMahjongRoomInfoLayout.ROOM_BACKGROUND);
-        drawRoomRow(canvas, "房间号", state.roomNumber(), TaizhouMahjongRoomInfoLayout.ROOM_ROW_CENTER_Y);
-        // TaiZhouMahjong/View.luac suppresses generic play-count updates. Only
-        // the original leftBanker message may replace this waiting value: four
-        // chairs render "N庄" (showLeftBankerCount), otherwise "N局" (showLeftJuCount).
-        drawRoomRow(
-                canvas,
-                "剩    余",
-                TaizhouTableInfoState.remainingText(state.leftBankerCount(), state.chairCount()),
-                TaizhouMahjongRoomInfoLayout.REMAINING_ROW_CENTER_Y);
+        if (TaizhouMahjongWaitingProjection.isGoldRoom(state)) {
+            drawGoldRoomRows(canvas, state);
+        } else {
+            drawRoomRow(
+                    canvas, "房间号", state.roomNumber(),
+                    TaizhouMahjongRoomInfoLayout.ROOM_ROW_CENTER_Y);
+            // TaiZhouMahjong/View.luac suppresses generic play-count updates. Only
+            // the original leftBanker message may replace this waiting value: four
+            // chairs render "N庄" (showLeftBankerCount), otherwise "N局" (showLeftJuCount).
+            drawRoomRow(
+                    canvas,
+                    "剩    余",
+                    TaizhouTableInfoState.remainingText(
+                            state.leftBankerCount(), state.chairCount()),
+                    TaizhouMahjongRoomInfoLayout.REMAINING_ROW_CENTER_Y);
+        }
 
         if (state.roundNumber() == 0) {
             drawSprite(canvas, centerRoomLabel, TaizhouMahjongRoomInfoLayout.CENTER_ROOM_LABEL);
@@ -100,11 +111,43 @@ final class TaizhouMahjongRoomInfoRenderer {
                     TaizhouMahjongRoomInfoLayout.CENTER_ROOM_NUMBER_X,
                     TaizhouMahjongRoomInfoLayout.CENTER_ROOM_NUMBER_Y);
         }
-        drawGameRule(canvas, state.gameRuleDisplay());
+        // RoomCenterInfoView:onGameRuleChanged 在金币场把 _centerTopPanel 关掉。
+        if (!TaizhouMahjongWaitingProjection.isGoldRoom(state)) {
+            drawGameRule(canvas, state.gameRuleDisplay());
+        }
         drawSprite(canvas, healthGame, TaizhouMahjongRoomInfoLayout.HEALTH_GAME);
         if (state.roundNumber() == 0) {
             drawOkGesture(canvas);
         }
+    }
+
+    /**
+     * {@code RoomInfoView:getInfoNodeConfig}：金币场左上角改成「底分 / 倍数」，
+     * 倍数的 {@code DefaultVisible=false}，只有服务端下发加倍状态后才出现。
+     */
+    private void drawGoldRoomRows(Canvas canvas, GameplayTableState state) {
+        drawRoomRow(
+                canvas,
+                "底    分",
+                baseScoreText(state),
+                TaizhouMahjongRoomInfoLayout.ROOM_ROW_CENTER_Y);
+        state.multipleChoice()
+                .ifPresent(
+                        multiple ->
+                                drawRoomRow(
+                                        canvas,
+                                        "倍    数",
+                                        "x" + multiple.currentMultiplier(),
+                                        TaizhouMahjongRoomInfoLayout.REMAINING_ROW_CENTER_Y));
+    }
+
+    /** 底分优先取加倍状态里的权威值，否则从规则串的「底分N」段取，与后端同源。 */
+    static String baseScoreText(GameplayTableState state) {
+        if (state.multipleChoice().isPresent()) {
+            return String.valueOf(state.multipleChoice().get().baseScore());
+        }
+        Matcher matcher = BASE_SCORE.matcher(state.gameRuleDisplay());
+        return matcher.find() ? matcher.group(1) : "-";
     }
 
     private void drawOkGesture(Canvas canvas) {

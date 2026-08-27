@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import com.nanbeiyule.game.gameplay.GameplayTingInfo;
 import com.nanbeiyule.game.mahjong.MahjongTileSprite;
 import com.nanbeiyule.game.mahjong.OriginalMahjongTileDrawPlan;
@@ -27,12 +28,16 @@ final class TaizhouCanHuRenderer {
     /** Surrogate value whose back/face-ground layers stand in for the 255 any-tile. */
     private static final int ANY_TILE_PLACEHOLDER = 0x11;
 
+    /** {@code can_hu_mah_info.fnt} 的 {@code face="FZCuYuan-M03S"}。 */
+    private static final String ORIGINAL_FONT_ASSET = "fonts/fangzhengcuyuan.ttf";
+
     private final OriginalMahjongTilePainter tilePainter;
     private final Bitmap background;
     private final Bitmap divisionLine;
     private final Bitmap huLogo;
     private final Bitmap anyTileIcon;
     private final Paint bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+    private final Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     TaizhouCanHuRenderer(Context context, OriginalMahjongTilePainter tilePainter) {
         this.tilePainter = tilePainter;
@@ -47,6 +52,9 @@ final class TaizhouCanHuRenderer {
                         BitmapFactory.decodeResource(
                                 context.getResources(), R.drawable.taizhou_mahjong_icon),
                         TaizhouCanHuLayout.ANY_TILE_FRAME);
+        textPaint.setTypeface(
+                Typeface.createFromAsset(context.getAssets(), ORIGINAL_FONT_ASSET));
+        textPaint.setTextAlign(Paint.Align.LEFT);
     }
 
     /**
@@ -68,15 +76,29 @@ final class TaizhouCanHuRenderer {
         float bgTopCocos = bgBottomCocos + height;
         float bgTop = TaizhouMahjongTableLayout.designY(bgTopCocos);
         float bgBottom = TaizhouMahjongTableLayout.designY(bgBottomCocos);
-        canvas.drawBitmap(background, null, new RectF(bgLeft, bgTop, bgRight, bgBottom), bitmapPaint);
+        TaizhouNineSlice.draw(
+                canvas,
+                background,
+                bitmapPaint,
+                new RectF(bgLeft, bgTop, bgRight, bgBottom),
+                TaizhouCanHuLayout.BG_CAP_X,
+                TaizhouCanHuLayout.BG_CAP_Y,
+                TaizhouCanHuLayout.BG_CAP_WIDTH,
+                TaizhouCanHuLayout.BG_CAP_HEIGHT,
+                scale);
 
         // 分割线：bg 本地 x=190 起 2 宽、通高（Lua setPosition/setContentSize）。
         float lineLeft = bgLeft + TaizhouCanHuLayout.LINE_LOCAL_X * scale;
-        canvas.drawBitmap(
+        TaizhouNineSlice.draw(
+                canvas,
                 divisionLine,
-                null,
+                bitmapPaint,
                 new RectF(lineLeft, bgTop, lineLeft + TaizhouCanHuLayout.LINE_WIDTH * scale, bgBottom),
-                bitmapPaint);
+                TaizhouCanHuLayout.LINE_CAP_X,
+                TaizhouCanHuLayout.LINE_CAP_Y,
+                TaizhouCanHuLayout.LINE_CAP_WIDTH,
+                TaizhouCanHuLayout.LINE_CAP_HEIGHT,
+                scale);
 
         // 胡字 logo：anchor (0,0.5) 于 bg 本地 (-35, h/2)，0.7 缩放随节点缩放。
         float logoWidth = TaizhouCanHuLayout.HU_LOGO_WIDTH * TaizhouCanHuLayout.HU_LOGO_SCALE * scale;
@@ -115,6 +137,50 @@ final class TaizhouCanHuRenderer {
                                 0.5f,
                                 jokers.contains(target)));
             }
+            drawInfo(canvas, state, index, worldX, worldCocosY, scale);
+        }
+    }
+
+    /**
+     * 每格的「N台」「N胡」「N张」：原版 {@code setHuInfo} 把数字放在牌位右侧 {@code x+50}，
+     * 行基线取 {@code huInfoPositionY[段数][序号]}，单位紧接数字右缘。数字用
+     * {@code can_hu_mah_info} 的红，单位用 {@code can_hu_mah_info_2} 的棕，两套字模
+     * 都是 FZCuYuan-M03S 46 号。
+     */
+    private void drawInfo(
+            Canvas canvas,
+            TaizhouCanHuState state,
+            int index,
+            float worldX,
+            float worldCocosY,
+            float scale) {
+        if (index >= state.infoRows().size()) {
+            return;
+        }
+        List<TaizhouCanHuState.InfoSegment> segments = state.infoRows().get(index);
+        if (segments.isEmpty()) {
+            return;
+        }
+        float[] rowOffsets = TaizhouCanHuLayout.INFO_ROW_OFFSETS[segments.size() - 1];
+        float textLeft = worldX + TaizhouCanHuLayout.INFO_TEXT_LOCAL_X * scale;
+        textPaint.setTextSize(TaizhouCanHuLayout.INFO_FONT_SIZE * scale);
+        for (int segment = 0; segment < segments.size(); segment++) {
+            float baselineCocosY =
+                    worldCocosY
+                            + (rowOffsets[segment]
+                                            + TaizhouCanHuLayout.INFO_LINE_HEIGHT
+                                            - TaizhouCanHuLayout.INFO_BASE_LINE)
+                                    * scale;
+            float baseline = TaizhouMahjongTableLayout.designY(baselineCocosY);
+            String number = Integer.toString(segments.get(segment).number());
+            textPaint.setColor(TaizhouCanHuLayout.INFO_NUMBER_COLOR);
+            canvas.drawText(number, textLeft, baseline, textPaint);
+            textPaint.setColor(TaizhouCanHuLayout.INFO_UNIT_COLOR);
+            canvas.drawText(
+                    segments.get(segment).unit(),
+                    textLeft + textPaint.measureText(number),
+                    baseline,
+                    textPaint);
         }
     }
 

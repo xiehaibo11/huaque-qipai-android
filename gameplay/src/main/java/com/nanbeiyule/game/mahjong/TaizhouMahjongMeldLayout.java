@@ -3,6 +3,7 @@ package com.nanbeiyule.game.mahjong;
 import com.nanbeiyule.game.gameplay.GameplayMeld;
 import com.nanbeiyule.game.mahjong.round.MahjongCombType;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -37,13 +38,22 @@ public final class TaizhouMahjongMeldLayout {
         public final float designX;
         public final float cocosY;
         public final float scale;
+        /** {@code comb:setLocalZOrder} 与 {@code mah:setLocalZOrder} 合成的绘制次序键。 */
+        public final int zOrder;
 
-        private TilePlacement(int pose, int tileValue, float designX, float cocosY, float scale) {
+        private TilePlacement(
+                int pose,
+                int tileValue,
+                float designX,
+                float cocosY,
+                float scale,
+                int zOrder) {
             this.pose = pose;
             this.tileValue = tileValue;
             this.designX = designX;
             this.cocosY = cocosY;
             this.scale = scale;
+            this.zOrder = zOrder;
         }
     }
 
@@ -107,6 +117,12 @@ public final class TaizhouMahjongMeldLayout {
     // ARROW_BY_MAH meld mode before the per-seat HandAreaLayout scale.
     private static final float ARROW_BY_MAH_COMB_SCALE = 0.9f;
 
+    /** {@code UIMahComb.SingleLayerMahCount}：单层最多三张。 */
+    private static final int SINGLE_LAYER_MAH_COUNT = 3;
+
+    /** 组内 z 最多到 {@code MaxCombMahsCount}，组的 z 按此步进才不会互相穿插。 */
+    private static final int COMB_Z_STRIDE = 16;
+
     private TaizhouMahjongMeldLayout() {}
 
     /**
@@ -115,10 +131,40 @@ public final class TaizhouMahjongMeldLayout {
      */
     public static List<TilePlacement> seatMelds(
             int localSeat, List<GameplayMeld> melds, int mySeat, int chairCount) {
-        SeatRule rule = rule(localSeat);
         List<TilePlacement> placements = new ArrayList<>();
+        layout(localSeat, melds, mySeat, chairCount, placements);
+        // Cocos 按 localZOrder 从小到大绘制；同 z 保持添加顺序（稳定排序）。
+        placements.sort(Comparator.comparingInt(placement -> placement.zOrder));
+        return List.copyOf(placements);
+    }
+
+    /**
+     * {@code UIMahHandArea:_getHandMahsStartPos} 的非 BOTTOM 分支：手牌起点是最后一组
+     * 的节点位置再推 {@code (BoundingBox + CombDistance) * AddDirection}，即组循环结束
+     * 时的游标。返回值与 {@link TaizhouMahjongHandLayout} 的手牌位移同在手牌区局部坐标系。
+     */
+    public static float handStartOffset(
+            int localSeat, List<GameplayMeld> melds, int mySeat, int chairCount) {
+        return layout(localSeat, melds, mySeat, chairCount, null);
+    }
+
+    private static float layout(
+            int localSeat,
+            List<GameplayMeld> melds,
+            int mySeat,
+            int chairCount,
+            List<TilePlacement> placements) {
+        SeatRule rule = rule(localSeat);
         float cursor = 0.0f;
+        int combIndex = 0;
         for (GameplayMeld meld : melds) {
+            combIndex++;
+            // _updateCombsPosition：正向增长的座位让先落的组压在后落的组上。
+            int combZ =
+                    rule.addDirection > 0
+                            ? (MahjongSeatAreaLayout.MAX_COMBS_COUNT - combIndex)
+                                    * COMB_Z_STRIDE
+                            : 0;
             int fromLocalSeat =
                     TaizhouMahjongSeatMapper.toLocalSeat(meld.fromSeat(), mySeat, chairCount);
             CombTiles comb = displayTiles(rule, localSeat, meld, fromLocalSeat);
@@ -133,22 +179,25 @@ public final class TaizhouMahjongMeldLayout {
                             ? (rule.sequenceOnX ? 0.0f : anchorPos) - comb.contentHeight * rule.combScale
                             : rule.sequenceOnX ? 0.0f : anchorPos;
             float effectiveScale = rule.combScale * rule.root.scale;
-            for (int index = 0; index < comb.values.size(); index++) {
-                placements.add(
-                        new TilePlacement(
-                                comb.poses.get(index),
-                                comb.values.get(index),
-                                rule.root.designX()
-                                        + (originX + comb.centersX.get(index) * rule.combScale)
-                                                * rule.root.scale,
-                                rule.root.cocosY()
-                                        + (originY + comb.centersY.get(index) * rule.combScale)
-                                                * rule.root.scale,
-                                effectiveScale));
+            if (placements != null) {
+                for (int index = 0; index < comb.values.size(); index++) {
+                    placements.add(
+                            new TilePlacement(
+                                    comb.poses.get(index),
+                                    comb.values.get(index),
+                                    rule.root.designX()
+                                            + (originX + comb.centersX.get(index) * rule.combScale)
+                                                    * rule.root.scale,
+                                    rule.root.cocosY()
+                                            + (originY + comb.centersY.get(index) * rule.combScale)
+                                                    * rule.root.scale,
+                                    effectiveScale,
+                                    combZ + comb.zOrders.get(index)));
+                }
             }
             cursor = anchorPos + rule.addDirection * (extent * rule.combScale + rule.combDistance);
         }
-        return List.copyOf(placements);
+        return cursor;
     }
 
     /**
@@ -176,7 +225,8 @@ public final class TaizhouMahjongMeldLayout {
                                 comb.values.get(index),
                                 cursor + comb.centersX.get(index),
                                 comb.centersY.get(index),
-                                1.0f));
+                                1.0f,
+                                comb.zOrders.get(index)));
             }
             cursor += comb.contentWidth + 20.0f;
         }
@@ -196,6 +246,7 @@ public final class TaizhouMahjongMeldLayout {
         final List<Integer> poses = new ArrayList<>(4);
         final List<Float> centersX = new ArrayList<>(4);
         final List<Float> centersY = new ArrayList<>(4);
+        final List<Integer> zOrders = new ArrayList<>(4);
         float contentWidth;
         float contentHeight;
     }
@@ -226,6 +277,9 @@ public final class TaizhouMahjongMeldLayout {
             comb.values.add(value);
             comb.poses.add(pose);
             if (index < 3) {
+                // _updateHorizontalLayoutAndSize：SingleLayerMahCount - index（近端压远端）。
+                // _updateVerticalLayoutAndSize：index（右端压左端）。
+                comb.zOrders.add(rule.rowLayout ? index + 1 : SINGLE_LAYER_MAH_COUNT - index - 1);
                 placeRowTile(rule, comb, tile, pose, advance, index);
                 if (rule.rowLayout) {
                     advance += tile.width;
@@ -240,10 +294,14 @@ public final class TaizhouMahjongMeldLayout {
                 }
             } else {
                 int alignIndex = ALIGN[localSeat][arrowMahIndex][index - 3] - 1;
+                comb.zOrders.add(
+                        rule.rowLayout
+                                ? index + 1
+                                : comb.zOrders.get(alignIndex) + SINGLE_LAYER_MAH_COUNT);
                 comb.centersX.add(comb.centersX.get(alignIndex));
                 comb.centersY.add(
                         comb.centersY.get(alignIndex)
-                                + MahjongTileSprite.defaultThickness(pose));
+                                + OriginalMahjongTileGeometry.thickness(pose));
             }
         }
         comb.contentWidth = rule.rowLayout ? advance : maxCross;

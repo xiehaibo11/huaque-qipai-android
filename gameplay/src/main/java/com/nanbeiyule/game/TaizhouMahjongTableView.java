@@ -77,6 +77,8 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
     private final TaizhouTableInfoRenderer tableInfoRenderer;
     private final TaizhouCanHuRenderer canHuRenderer;
     private final TaizhouCanHuTracker canHuTracker = new TaizhouCanHuTracker();
+    private final TaizhouVoiceLoadOverlayRenderer voiceLoadOverlayRenderer;
+    private final TaizhouVoiceLoadProgress voiceLoadProgress = new TaizhouVoiceLoadProgress();
     private GameplayTableState tableState;
     private TaizhouRoomToolsState roomToolsState;
     private String visibleMessageId = "";
@@ -124,6 +126,7 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
         roundOverlays = renderers.roundOverlays;
         tableInfoRenderer = renderers.tableInfo;
         canHuRenderer = renderers.canHu;
+        voiceLoadOverlayRenderer = renderers.voiceLoadOverlay;
         touchController =
                 new TaizhouTableTouchController(
                         playInteraction,
@@ -218,7 +221,8 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
             TaizhouRoomToolsState.Message latest = state.messages().get(state.messages().size() - 1);
             if (!latest.messageId().equals(visibleMessageId)) {
                 visibleMessageId = latest.messageId();
-                visibleMessageUntil = SystemClock.elapsedRealtime() + 4_500L;
+                visibleMessageUntil =
+                        TaizhouRoomMessageLayout.visibleUntil(SystemClock.elapsedRealtime());
             }
         }
         invalidate();
@@ -233,6 +237,7 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
             return;
         }
         MahjongSettingData.setAppearance(style.appearance());
+        discardRenderer.setShowBigOutMah(style.value(TaizhouSettingStyle.Choice.OUT_STYLE) == 2);
         backgroundBitmap = renderers.tableBackground(
                 style.value(TaizhouSettingStyle.Choice.TABLE_STYLE));
         invalidate();
@@ -242,8 +247,22 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
         preferences = nextPreferences == null
                 ? TaizhouMahjongPreferences.defaults()
                 : nextPreferences;
-        playInteraction.replace(visibleRound, effectivePermission(playPermission), TaizhouMahjongHandRenderer.renderedLocalMeldCount(tableState, visibleRound, false));
+        playInteraction.replace(
+                visibleRound,
+                effectivePermission(playPermission),
+                TaizhouMahjongHandRenderer.renderedLocalMeldCount(tableState, visibleRound, false),
+                preferences.playMode());
         canHuTracker.update(tableState, preferences, playInteraction);
+        invalidate();
+    }
+
+    void startVoiceLoadProgress() {
+        voiceLoadProgress.start();
+        invalidate();
+    }
+
+    void setVoiceLoadProgress(int loaded, int total) {
+        voiceLoadProgress.onProgress(loaded, total);
         invalidate();
     }
 
@@ -277,9 +296,15 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
         tableState = nextState;
         visibleRound = nextVisibleRound;
         playPermission = nextPlayPermission;
-        playInteraction.replace(nextVisibleRound, effectivePermission(nextPlayPermission), TaizhouMahjongHandRenderer.renderedLocalMeldCount(nextState, nextVisibleRound, false));
+        playInteraction.replace(
+                nextVisibleRound,
+                effectivePermission(nextPlayPermission),
+                TaizhouMahjongHandRenderer.renderedLocalMeldCount(nextState, nextVisibleRound, false),
+                preferences.playMode());
         touchController.reset(nextState);
-        roundOverlays.update(nextState, SystemClock.elapsedRealtime());
+        long nowElapsed = SystemClock.elapsedRealtime();
+        discardRenderer.update(nextVisibleRound, nowElapsed);
+        roundOverlays.update(nextState, nowElapsed);
         canHuTracker.update(tableState, preferences, playInteraction);
         if (nextState != null) {
             setContentDescription("台州麻将，房间" + nextState.roomNumber());
@@ -311,6 +336,9 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
         // State-backed seats, tiles, actions, and counters are added only when
         // their server events and original CSB/Lua evidence are both complete.
         if (tableState == null) {
+            int save = AdaptiveCanvasDrawing.apply(canvas, viewport.designTransform());
+            voiceLoadOverlayRenderer.draw(canvas, voiceLoadProgress);
+            canvas.restoreToCount(save);
             return;
         }
         int save = AdaptiveCanvasDrawing.apply(canvas, viewport.designTransform());
@@ -318,6 +346,7 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
         playerRenderer.draw(canvas, tableState);
         if (touchController.totalResultInteraction().showing(tableState)) {
             totalResultRenderer.draw(canvas, tableState);
+            voiceLoadOverlayRenderer.draw(canvas, voiceLoadProgress);
             canvas.restoreToCount(save);
             return;
         }
@@ -330,13 +359,18 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
                     tableState.settlement().get(),
                     TaizhouMahjongVisibleRound.jokerTilesOf(visibleRound),
                     TaizhouSettleInteraction.hasVisibleTotalResult(tableState));
+            waitingChromeRenderer.drawSettlementTopControls(
+                    canvas, TaizhouMahjongWaitingProjection.showTrustButton(tableState));
+            voiceLoadOverlayRenderer.draw(canvas, voiceLoadProgress);
             canvas.restoreToCount(save);
             postInvalidateDelayed(10_000L);
             return;
         }
         multipleRenderer.draw(canvas, tableState);
-        discardRenderer.draw(canvas, visibleRound, playInteraction);
+        long nowElapsed = SystemClock.elapsedRealtime();
+        discardRenderer.draw(canvas, visibleRound, playInteraction, nowElapsed);
         handRenderer.draw(canvas, tableState, visibleRound, playInteraction);
+        discardRenderer.drawShowOutMah(canvas, visibleRound, nowElapsed);
         boolean showTableActivityIcons = TaizhouMahjongWaitingProjection.showTableActivityIcons(tableState);
         waitingChromeRenderer.draw(
                 canvas,
@@ -344,8 +378,9 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
                 recordAccessKnown && !recordAccessGranted,
                 recordAccessKnown && recordBadgeStore.shouldShow(recordAccessGranted),
                 showTableActivityIcons,
-                canHuTracker.tingButtonVisible(),
                 TaizhouMahjongWaitingProjection.showTrustButton(tableState),
+                TaizhouMahjongWaitingProjection.showRuleButton(tableState),
+                canHuTracker.tingButtonVisible(),
                 iconEffectsDriver.elapsedSeconds());
         if (showTableActivityIcons) { iconEffectsDriver.scheduleFrame(this); }
         // 生牌信息层浮在牌面与等待桌控件之上（原版 TableInfoLayer 是独立 UI 层）。
@@ -356,11 +391,13 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
         }
         // 提前开局按钮同属 TableInfo.csb，画在等待桌控件之上、房间消息之下。
         earlyStartRenderer.draw(canvas, tableState);
-        long nowElapsed = SystemClock.elapsedRealtime();
         roundOverlays.draw(canvas, tableState, visibleRound, nowElapsed);
-        long overlayDelay = roundOverlays.nextRepaintDelayMillis(tableState, nowElapsed);
-        if (overlayDelay > 0L) {
-            postInvalidateDelayed(overlayDelay);
+        long frameDelay =
+                Math.max(
+                        discardRenderer.nextRepaintDelayMillis(nowElapsed),
+                        roundOverlays.nextRepaintDelayMillis(tableState, nowElapsed));
+        if (frameDelay > 0L) {
+            postInvalidateDelayed(frameDelay);
         }
         drawRoomMessage(canvas);
         // 听牌可胡提示是 WINDOW 级弹层（原版 CanHuMahsUI:showSelf），画在最上。
@@ -385,6 +422,7 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
         if (TaizhouMahjongWaitingProjection.showStartButton(tableState)) {
             drawCenterButton(canvas, startBitmap, TaizhouMahjongWaitingLayout.START_BUTTON);
         }
+        voiceLoadOverlayRenderer.draw(canvas, voiceLoadProgress);
         canvas.restoreToCount(save);
         postInvalidateDelayed(10_000L);
     }
@@ -405,6 +443,8 @@ public final class TaizhouMahjongTableView extends AdaptiveCanvasView {
 
     @Override
     protected void onDetachedFromWindow() {
+        discardRenderer.release();
+        roundOverlays.release();
         iconEffectsDriver.release();
         super.onDetachedFromWindow();
     }

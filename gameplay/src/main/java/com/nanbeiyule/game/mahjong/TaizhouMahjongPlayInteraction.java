@@ -25,6 +25,8 @@ public final class TaizhouMahjongPlayInteraction {
     private TaizhouMahjongPlayGesture gesture;
     private List<TaizhouMahjongPlayGesture.Tile> tiles = List.of();
     private VisualState visualState = VisualState.EMPTY;
+    private TaizhouMahjongPlayGesture.Mode fallbackMode =
+            TaizhouMahjongPlayGesture.Mode.SINGLE_CLICK;
     private final Set<String> consumedActionTokens = new HashSet<>();
 
     public void replace(
@@ -40,28 +42,48 @@ public final class TaizhouMahjongPlayInteraction {
             TaizhouMahjongVisibleRound nextRound,
             TaizhouMahjongPlayPermission nextPermission,
             int nextRenderedMeldCount) {
+        replace(nextRound, nextPermission, nextRenderedMeldCount, fallbackMode);
+    }
+
+    /**
+     * 原版 {@code UIMahTouchHandArea} 一直挂在手牌上：没轮到自己也能选中、抬牌、拖动，
+     * 只是 {@code UIMahLayer:_onPlayMah} 里 {@code getPlayPower()} 为假时不发出牌。
+     * 所以手势对象必须随手牌存在，而不是随出牌权存在；出牌权只决定 {@code dispatch} 能否成牌。
+     *
+     * @param nextMode 没有出牌权时用玩家设置里的单击/双击（原版 {@code MahSettingKey.PlayType}）。
+     */
+    public void replace(
+            TaizhouMahjongVisibleRound nextRound,
+            TaizhouMahjongPlayPermission nextPermission,
+            int nextRenderedMeldCount,
+            TaizhouMahjongPlayGesture.Mode nextMode) {
+        TaizhouMahjongPlayGesture.Mode mode =
+                nextPermission != null ? nextPermission.mode() : nextMode;
         if (Objects.equals(round, nextRound)
                 && Objects.equals(permission, nextPermission)
-                && renderedMeldCount == nextRenderedMeldCount) {
+                && renderedMeldCount == nextRenderedMeldCount
+                && fallbackMode == mode) {
             return;
         }
         round = nextRound;
         permission = nextPermission;
         renderedMeldCount = nextRenderedMeldCount;
+        fallbackMode = mode;
         gesture = null;
         tiles = List.of();
         visualState = VisualState.EMPTY;
-        if (nextPermission == null) {
-            return;
-        }
         if (nextRound == null) {
-            throw new IllegalArgumentException("play permission requires a visible round");
+            if (nextPermission != null) {
+                throw new IllegalArgumentException("play permission requires a visible round");
+            }
+            return;
         }
         tiles =
                 TaizhouMahjongPlayProjection.localHand(
                         nextRound, nextPermission, nextRenderedMeldCount);
-        gesture = new TaizhouMahjongPlayGesture(nextPermission.mode());
-        if (!consumedActionTokens.contains(nextPermission.actionToken())) {
+        gesture = new TaizhouMahjongPlayGesture(mode);
+        if (nextPermission != null
+                && !consumedActionTokens.contains(nextPermission.actionToken())) {
             gesture.replacePlayPermission(nextPermission.actionToken());
         }
     }
@@ -104,6 +126,9 @@ public final class TaizhouMahjongPlayInteraction {
         }
         TaizhouMahjongPlayGesture.Tile tile =
                 TaizhouMahjongPlayProjection.topTileAt(activeTiles(), x, cocosY);
+        if (tile == null) {
+            tile = selectedBaseTileAt(x, cocosY);
+        }
         return apply(gesture.onDown(tile, x, cocosY, animationRunning));
     }
 
@@ -114,6 +139,9 @@ public final class TaizhouMahjongPlayInteraction {
         }
         TaizhouMahjongPlayGesture.Tile tile =
                 TaizhouMahjongPlayProjection.topTileAt(activeTiles(), x, cocosY);
+        if (tile == null) {
+            tile = selectedBaseTileAt(x, cocosY);
+        }
         if (tile == null || tile.index() != selectedIndex) {
             return null;
         }
@@ -145,6 +173,19 @@ public final class TaizhouMahjongPlayInteraction {
                                                 TaizhouMahjongHandLayout.SELECTED_RAISE)
                                         : tile)
                 .toList();
+    }
+
+    private TaizhouMahjongPlayGesture.Tile selectedBaseTileAt(float x, float cocosY) {
+        Integer selected = visualState.selectedIndex();
+        if (selected == null) {
+            return null;
+        }
+        for (TaizhouMahjongPlayGesture.Tile tile : tiles) {
+            if (tile.index() == selected && tile.touchEnabled() && tile.contains(x, cocosY)) {
+                return tile;
+            }
+        }
+        return null;
     }
 
     private TaizhouMahjongPlayGesture.Result apply(

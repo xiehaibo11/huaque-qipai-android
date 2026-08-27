@@ -6,7 +6,17 @@ final class TaizhouWaitingToolLayout {
     static final float DESIGN_HEIGHT = 1080.0f;
 
     static final Box CHAT_PANEL = new Box(1260.0f, 100.0f, 1920.0f, 980.0f);
-    static final Box CHAT_CONTENT = new Box(1283.0f, 100.0f, 1813.0f, 920.0f);
+    static final Box CHAT_CONTENT = new Box(1283.0f, 128.0f, 1813.0f, 948.0f);
+    static final int CHAT_PANEL_BACKGROUND = R.drawable.taizhou_tool_chat_bg;
+    static final int CHAT_CONTENT_BACKGROUND = R.drawable.taizhou_tool_chat_bg_2;
+    static final float CHAT_QUICK_PHRASE_ROW_HEIGHT = 75.0f;
+    static final float CHAT_QUICK_PHRASE_ITEM_LEFT = 1290.0f;
+    static final float CHAT_QUICK_PHRASE_ITEM_WIDTH = 516.0f;
+    static final float CHAT_QUICK_PHRASE_ITEM_HEIGHT = 75.0f;
+    static final float CHAT_QUICK_PHRASE_TEXT_LEFT = 1300.0f;
+    static final float CHAT_QUICK_PHRASE_TEXT_WIDTH = 516.0f;
+    static final float CHAT_QUICK_PHRASE_TEXT_SIZE = 36.0f;
+    static final int CHAT_QUICK_PHRASE_TEXT_COLOR = 0xFF9D613E;
     static final Box CHAT_TALK_TAB = centered(1877.0f, 209.0f, 86.0f, 175.0f);
     static final Box CHAT_EMOJI_TAB = centered(1868.0f, 388.0f, 86.0f, 175.0f);
     static final Box CHAT_RECORD_TAB = centered(1869.0f, 563.0f, 86.0f, 175.0f);
@@ -28,7 +38,7 @@ final class TaizhouWaitingToolLayout {
         if (!CHAT_CONTENT.contains(x, y) || count <= 0) {
             return -1;
         }
-        int index = (int) ((y - CHAT_CONTENT.top) / 80.0f);
+        int index = (int) ((y - CHAT_CONTENT.top) / CHAT_QUICK_PHRASE_ROW_HEIGHT);
         return index >= 0 && index < count ? index : -1;
     }
 

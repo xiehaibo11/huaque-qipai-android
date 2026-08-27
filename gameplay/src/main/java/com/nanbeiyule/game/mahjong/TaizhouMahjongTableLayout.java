@@ -154,6 +154,19 @@ public final class TaizhouMahjongTableLayout {
 
     public static final Slot OUT_TOP = new Slot("KW_OUT_MAH", SEAT_TOP, 1219.968f, 700.0f, 0.5f);
 
+    /** Big discard preview roots, {@code KW_PANEL_SHOW_OUT_MAH_1..4}. */
+    public static final Slot SHOW_OUT_LEFT =
+            new Slot("KW_PANEL_SHOW_OUT_MAH_1", CENTER, 380.0f, 540.0f, 1.0f);
+
+    public static final Slot SHOW_OUT_BOTTOM =
+            new Slot("KW_PANEL_SHOW_OUT_MAH_2", CENTER, 960.0f, 310.0f, 1.0f);
+
+    public static final Slot SHOW_OUT_RIGHT =
+            new Slot("KW_PANEL_SHOW_OUT_MAH_3", CENTER, 1540.0f, 540.0f, 1.0f);
+
+    public static final Slot SHOW_OUT_TOP =
+            new Slot("KW_PANEL_SHOW_OUT_MAH_4", CENTER, 960.0f, 783.0f, 1.0f);
+
     /** Secondary river roots {@code KW_OUT_MAH_2}, used by the two vertical seats. */
     public static final Slot OUT_BOTTOM_SECOND =
             new Slot("KW_OUT_MAH_2", SEAT_BOTTOM, 440.02f, 395.0f, 0.5f);
@@ -238,6 +251,16 @@ public final class TaizhouMahjongTableLayout {
             throw new IllegalArgumentException("unknown container " + seat);
         }
         return PANELS[seat - 1];
+    }
+
+    public static Slot showOutMahPanel(int localSeat) {
+        return switch (localSeat) {
+            case SEAT_LEFT -> SHOW_OUT_LEFT;
+            case SEAT_BOTTOM -> SHOW_OUT_BOTTOM;
+            case SEAT_RIGHT -> SHOW_OUT_RIGHT;
+            case SEAT_TOP -> SHOW_OUT_TOP;
+            default -> throw new IllegalArgumentException("unknown local seat " + localSeat);
+        };
     }
 
     /** Converts a Cocos bottom-up Y into an Android top-down Y. */

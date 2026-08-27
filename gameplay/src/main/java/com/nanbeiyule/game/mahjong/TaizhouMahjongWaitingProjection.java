@@ -54,7 +54,7 @@ public final class TaizhouMahjongWaitingProjection {
 
     /** Mirrors CenterBtns/View.lua: start is the local player's ready control. */
     public static boolean showStartButton(GameplayTableState state) {
-        if (state.phase() != GameplayPhase.WAITING) {
+        if (state.phase() != GameplayPhase.WAITING || isGoldRoom(state)) {
             return false;
         }
         for (GameplaySeat seat : state.seats()) {
@@ -68,6 +68,7 @@ public final class TaizhouMahjongWaitingProjection {
     /** Mirrors CenterBtns/View.lua#getInviteBtnVisible for a private room player. */
     public static boolean showInviteAndCopy(GameplayTableState state) {
         return state.phase() == GameplayPhase.WAITING
+                && !isGoldRoom(state)
                 && state.roundNumber() == 0
                 && state.seats().size() < state.chairCount();
     }
@@ -88,6 +89,14 @@ public final class TaizhouMahjongWaitingProjection {
                 || state.gameId() == GOLD_TAIZHOU_MAHJONG_GAME_ID;
     }
 
+    /**
+     * 左上角规则按钮：{@code GameBase/Modules/RoomInfo/View.lua:getLeftRuleVisible}
+     * 在金币场与回放里返回 false。
+     */
+    public static boolean showRuleButton(GameplayTableState state) {
+        return !isGoldRoom(state);
+    }
+
     public static boolean showTableActivityIcons(GameplayTableState state) {
         return state.phase() == GameplayPhase.WAITING
                 && state.roundNumber() == 0
@@ -96,11 +105,12 @@ public final class TaizhouMahjongWaitingProjection {
 
     public static Action actionAt(
             GameplayTableState state, float designX, float designY) {
-        return actionAt(state, designX, designY, false);
+        return actionAt(state, designX, designY, true);
     }
 
+    /** 原版听按钮隐藏时不可点：显隐由出牌结果（tingMahs 命中）决定。 */
     public static Action actionAt(
-            GameplayTableState state, float designX, float designY, boolean showTingButton) {
+            GameplayTableState state, float designX, float designY, boolean tingButtonVisible) {
         if (showInviteAndCopy(state)
                 && TaizhouMahjongWaitingLayout.INVITE_BUTTON.contains(designX, designY)) {
             return Action.INVITE;
@@ -113,7 +123,8 @@ public final class TaizhouMahjongWaitingProjection {
                 && TaizhouMahjongWaitingLayout.COPY_BUTTON.contains(designX, designY)) {
             return Action.COPY;
         }
-        if (TaizhouMahjongWaitingLayout.RULE_BUTTON.contains(designX, designY)) {
+        if (showRuleButton(state)
+                && TaizhouMahjongWaitingLayout.RULE_BUTTON.contains(designX, designY)) {
             return Action.RULE;
         }
         if (TaizhouMahjongWaitingLayout.RECORD_BUTTON.contains(designX, designY)) {
@@ -135,12 +146,9 @@ public final class TaizhouMahjongWaitingProjection {
         if (TaizhouMahjongWaitingLayout.SHUFFLE_BUTTON.contains(designX, designY)) {
             return Action.SHUFFLE;
         }
-        if (showTingButton && TaizhouMahjongWaitingLayout.TING_BUTTON.contains(designX, designY)) {
+        if (tingButtonVisible
+                && TaizhouMahjongWaitingLayout.TING_BUTTON.contains(designX, designY)) {
             return Action.TING;
-        }
-        if (!showTingButton
-                && TaizhouMahjongWaitingLayout.FORTUNE_BUTTON.contains(designX, designY)) {
-            return Action.FORTUNE;
         }
         if (TaizhouMahjongWaitingLayout.CHAT_BUTTON.contains(designX, designY)) {
             return Action.CHAT;

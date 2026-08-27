@@ -74,36 +74,34 @@ public final class TaizhouMahjongHandLayout {
     private TaizhouMahjongHandLayout() {}
 
     public static TilePosition handTile(
-            int localSeat, int zeroBasedIndex, int meldCount, boolean selected) {
+            int localSeat, int zeroBasedIndex, float meldStartOffset, boolean selected) {
         validateIndex(zeroBasedIndex);
         SeatRule rule = rule(localSeat);
-        float startOffset = meldOffset(localSeat, meldCount);
         float step = MahjongTileSprite.topEdgeWidth(rule.pose) * rule.tileScale;
-        float localAdvance = startOffset + zeroBasedIndex * step;
-        float localX = rule.horizontal ? rule.direction * localAdvance : 0.0f;
-        float localY = rule.horizontal ? 0.0f : rule.direction * localAdvance;
+        float localAdvance = meldStartOffset + rule.direction * zeroBasedIndex * step;
+        float localX = rule.horizontal ? localAdvance : 0.0f;
+        float localY = rule.horizontal ? 0.0f : localAdvance;
         if (selected) {
             localY += SELECTED_RAISE;
         }
         return position(rule, localX, localY);
     }
 
-    public static TilePosition drawnTile(int localSeat, int handCount, int meldCount) {
-        return drawnTile(localSeat, handCount, meldCount, false);
+    public static TilePosition drawnTile(int localSeat, int handCount, float meldStartOffset) {
+        return drawnTile(localSeat, handCount, meldStartOffset, false);
     }
 
     public static TilePosition drawnTile(
-            int localSeat, int handCount, int meldCount, boolean selected) {
+            int localSeat, int handCount, float meldStartOffset, boolean selected) {
         if (handCount < 0 || handCount > GENERIC_DRAWABLE_CAPACITY) {
             throw new IllegalArgumentException("invalid hand count " + handCount);
         }
         SeatRule rule = rule(localSeat);
-        float startOffset = meldOffset(localSeat, meldCount);
         float tilesLength =
                 handCount * MahjongTileSprite.topEdgeWidth(rule.pose) * rule.tileScale;
-        float localAdvance = startOffset + tilesLength + DRAWN_TILE_GAP;
-        float localX = rule.horizontal ? rule.direction * localAdvance : 0.0f;
-        float localY = rule.horizontal ? 0.0f : rule.direction * localAdvance;
+        float localAdvance = meldStartOffset + rule.direction * (tilesLength + DRAWN_TILE_GAP);
+        float localX = rule.horizontal ? localAdvance : 0.0f;
+        float localY = rule.horizontal ? 0.0f : localAdvance;
         if (selected) {
             localY += SELECTED_RAISE;
         }
@@ -121,18 +119,18 @@ public final class TaizhouMahjongHandLayout {
                 rule.pose);
     }
 
-    private static float meldOffset(int localSeat, int meldCount) {
+    /**
+     * {@code UIMahHandArea:_getHandMahsStartPos} 的 {@code CombTotalLength} 分支：只有
+     * BOTTOM 的 {@code HandAreaLayout} 带 {@code CombTotalLength = 405}，手牌起点直接按
+     * 组数乘固定长度再乘 {@code AddDirection}；其余三家用实际副露包围盒，见
+     * {@link TaizhouMahjongMeldLayout#handStartOffset}。
+     */
+    public static float bottomMeldStartOffset(int meldCount) {
         if (meldCount < 0 || meldCount > MahjongSeatAreaLayout.MAX_COMBS_COUNT) {
             throw new IllegalArgumentException("invalid meld count " + meldCount);
         }
-        if (meldCount == 0) {
-            return 0.0f;
-        }
-        if (localSeat != TaizhouMahjongTableLayout.SEAT_BOTTOM) {
-            throw new IllegalArgumentException(
-                    "opponent meld offset requires the rendered meld bounds");
-        }
-        return meldCount * BOTTOM_MELD_LENGTH;
+        return meldCount * BOTTOM_MELD_LENGTH
+                * rule(TaizhouMahjongTableLayout.SEAT_BOTTOM).direction;
     }
 
     private static void validateIndex(int zeroBasedIndex) {

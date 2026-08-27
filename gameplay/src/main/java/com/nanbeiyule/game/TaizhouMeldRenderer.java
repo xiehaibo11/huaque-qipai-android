@@ -7,9 +7,9 @@ import com.nanbeiyule.game.mahjong.MahjongTile;
 import com.nanbeiyule.game.mahjong.OriginalMahjongTileDrawPlan;
 import com.nanbeiyule.game.mahjong.OriginalMahjongTilePainter;
 import com.nanbeiyule.game.mahjong.TaizhouMahjongMeldLayout;
+import com.nanbeiyule.game.mahjong.TaizhouMahjongMeldProjection;
 import com.nanbeiyule.game.mahjong.TaizhouMahjongSeatMapper;
 import com.nanbeiyule.game.mahjong.TaizhouMahjongVisibleRound;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,7 +34,8 @@ final class TaizhouMeldRenderer {
             return;
         }
         for (int serverSeat = 1; serverSeat <= state.chairCount(); serverSeat++) {
-            List<GameplayMeld> seatMelds = meldsOf(state.melds(), serverSeat);
+            List<GameplayMeld> seatMelds =
+                    TaizhouMahjongMeldProjection.seatMelds(state.melds(), serverSeat);
             if (seatMelds.isEmpty()) {
                 continue;
             }
@@ -44,7 +45,7 @@ final class TaizhouMeldRenderer {
             int renderableMeldCount =
                     visibleRound == null
                             ? seatMelds.size()
-                            : renderableMeldCount(
+                            : TaizhouMahjongMeldProjection.renderableMeldCount(
                                     seatMelds.size(),
                                     visibleRound.handAt(serverSeat).meldCount());
             for (TaizhouMahjongMeldLayout.TilePlacement placement :
@@ -73,24 +74,4 @@ final class TaizhouMeldRenderer {
         }
     }
 
-    /**
-     * Public melds arrive before the private hand update on some event boundaries.
-     * Keep the two layers atomic so a new meld cannot be painted over the old hand.
-     */
-    static int renderableMeldCount(int publicMeldCount, int visibleMeldCount) {
-        if (publicMeldCount < 0 || visibleMeldCount < 0) {
-            throw new IllegalArgumentException("meld counts must be non-negative");
-        }
-        return Math.min(publicMeldCount, visibleMeldCount);
-    }
-
-    private static List<GameplayMeld> meldsOf(List<GameplayMeld> melds, int serverSeat) {
-        List<GameplayMeld> result = new ArrayList<>();
-        for (GameplayMeld meld : melds) {
-            if (meld.seat() == serverSeat) {
-                result.add(meld);
-            }
-        }
-        return result;
-    }
 }

@@ -254,10 +254,16 @@ public final class TaizhouMahjongPlayGesture {
         selected = findTile(selectedIndex, currentTiles);
         if (isSingleClick(originalPressedTile)) {
             selectedIndex = null;
-            if (selected != null && selected.visible() && selected.contains(x, y)) {
+            if (selected != null
+                    && selected.visible()
+                    && (selected.contains(x, y)
+                            || samePressedTileHit(originalPressedTile, selected, x, y))) {
                 intent = dispatch(selected);
             }
-        } else if (selected == null || !selected.visible() || !selected.contains(x, y)) {
+        } else if (selected == null
+                || !selected.visible()
+                || (!selected.contains(x, y)
+                        && !samePressedTileHit(originalPressedTile, selected, x, y))) {
             selectedIndex = null;
         }
         clearActiveTouch();
@@ -275,6 +281,13 @@ public final class TaizhouMahjongPlayGesture {
 
     private boolean isSingleClick(Tile tile) {
         return mode == Mode.SINGLE_CLICK && !tile.ting();
+    }
+
+    private static boolean samePressedTileHit(Tile pressed, Tile selected, float x, float y) {
+        return pressed.index() == selected.index()
+                && pressed.visible()
+                && pressed.touchEnabled()
+                && pressed.contains(x, y);
     }
 
     private void clearActiveTouch() {

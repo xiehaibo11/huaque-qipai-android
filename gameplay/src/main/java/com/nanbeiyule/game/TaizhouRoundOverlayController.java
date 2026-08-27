@@ -24,8 +24,11 @@ final class TaizhouRoundOverlayController {
     private final TaizhouDiceRenderer diceRenderer;
     private final TaizhouActionTipOverlay tipOverlay;
     private final TaizhouActionTipTracker tipTracker = new TaizhouActionTipTracker();
+    private final TaizhouMahjongActionEffectTracker actionEffectTracker =
+            new TaizhouMahjongActionEffectTracker();
     private final TaizhouActionBarHost actionBarHost;
     private final TaizhouActionBarRenderer actionBarRenderer;
+    private final TaizhouMahjongActionEffectRenderer actionEffectRenderer;
 
     TaizhouRoundOverlayController(
             TaizhouJokerAreaRenderer jokerAreaRenderer,
@@ -34,7 +37,8 @@ final class TaizhouRoundOverlayController {
             TaizhouDiceRenderer diceRenderer,
             TaizhouActionTipOverlay tipOverlay,
             TaizhouActionBarHost actionBarHost,
-            TaizhouActionBarRenderer actionBarRenderer) {
+            TaizhouActionBarRenderer actionBarRenderer,
+            TaizhouMahjongActionEffectRenderer actionEffectRenderer) {
         this.jokerAreaRenderer = Objects.requireNonNull(jokerAreaRenderer, "jokerAreaRenderer");
         this.meldRenderer = Objects.requireNonNull(meldRenderer, "meldRenderer");
         this.flowerRenderer = Objects.requireNonNull(flowerRenderer, "flowerRenderer");
@@ -42,6 +46,8 @@ final class TaizhouRoundOverlayController {
         this.tipOverlay = Objects.requireNonNull(tipOverlay, "tipOverlay");
         this.actionBarHost = Objects.requireNonNull(actionBarHost, "actionBarHost");
         this.actionBarRenderer = Objects.requireNonNull(actionBarRenderer, "actionBarRenderer");
+        this.actionEffectRenderer =
+                Objects.requireNonNull(actionEffectRenderer, "actionEffectRenderer");
     }
 
     void setActionListener(TaizhouActionBarHost.Listener listener) {
@@ -52,6 +58,7 @@ final class TaizhouRoundOverlayController {
     void update(GameplayTableState state, long nowElapsed) {
         actionBarHost.update(state);
         tipTracker.update(state == null ? null : state.actionTip().orElse(null), nowElapsed);
+        actionEffectTracker.update(state, nowElapsed);
     }
 
     void draw(
@@ -65,6 +72,14 @@ final class TaizhouRoundOverlayController {
         meldRenderer.draw(canvas, state, visibleRound);
         flowerRenderer.draw(canvas, state);
         diceRenderer.draw(canvas, state, nowElapsed);
+        if (state != null) {
+            actionEffectRenderer.draw(
+                    canvas,
+                    actionEffectTracker.running(nowElapsed),
+                    state.mySeat(),
+                    state.chairCount(),
+                    nowElapsed);
+        }
         actionBarRenderer.draw(canvas, actionBarHost.barState());
         tipTracker
                 .visibleKind(nowElapsed)
@@ -74,7 +89,14 @@ final class TaizhouRoundOverlayController {
     /** Milliseconds until the running tip hides; 0 when no repaint is needed. */
     long nextRepaintDelayMillis(GameplayTableState state, long nowElapsed) {
         return Math.max(tipTracker.remainingMillis(nowElapsed),
-                diceRenderer.nextRepaintDelayMillis(state, nowElapsed));
+                Math.max(
+                        diceRenderer.nextRepaintDelayMillis(state, nowElapsed),
+                        actionEffectTracker.nextRepaintDelayMillis(nowElapsed)));
+    }
+
+    void release() {
+        diceRenderer.release();
+        actionEffectRenderer.release();
     }
 
     /** Returns true when the action bar captured the touch (bar has priority). */

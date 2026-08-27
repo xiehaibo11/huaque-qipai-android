@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import com.nanbeiyule.game.gameplay.GameplayMeld;
 import com.nanbeiyule.game.gameplay.GameplayTableState;
 import com.nanbeiyule.game.gameplay.GameplayActionOffer;
 import com.nanbeiyule.game.mahjong.MahjongTileSprite;
@@ -13,6 +12,7 @@ import com.nanbeiyule.game.mahjong.OriginalMahjongTileGeometry;
 import com.nanbeiyule.game.mahjong.OriginalMahjongTilePainter;
 import com.nanbeiyule.game.mahjong.TaizhouMahjongHandLayout;
 import com.nanbeiyule.game.mahjong.TaizhouMahjongHandProjection;
+import com.nanbeiyule.game.mahjong.TaizhouMahjongMeldProjection;
 import com.nanbeiyule.game.mahjong.TaizhouMahjongPlayGesture;
 import com.nanbeiyule.game.mahjong.TaizhouMahjongPlayInteraction;
 import com.nanbeiyule.game.mahjong.TaizhouMahjongSeatMapper;
@@ -70,11 +70,11 @@ final class TaizhouMahjongHandRenderer {
             return;
         }
         Integer actionMaskValue = actionMaskTileValue(state);
-        for (int serverSeat = 1; serverSeat <= round.chairCount(); serverSeat++) {
-            int renderedMeldCount =
-                    renderedMeldCount(state, round, serverSeat, useVisibleMeldCount);
+        for (int serverSeat : TaizhouMahjongHandProjection.serverSeatDrawOrder(round)) {
+            float meldStartOffset =
+                    meldStartOffset(state, round, serverSeat, useVisibleMeldCount);
             List<TaizhouMahjongHandProjection.Tile> hand =
-                    TaizhouMahjongHandProjection.forSeat(round, serverSeat, renderedMeldCount);
+                    TaizhouMahjongHandProjection.forSeat(round, serverSeat, meldStartOffset);
             boolean local = serverSeat == round.mySeat();
             for (TaizhouMahjongHandProjection.Tile tile : hand) {
                 boolean masked =
@@ -85,7 +85,7 @@ final class TaizhouMahjongHandRenderer {
                         canvas,
                         round,
                         tile,
-                        renderedMeldCount,
+                        meldStartOffset,
                         local ? interaction : null,
                         masked);
             }
@@ -120,7 +120,7 @@ final class TaizhouMahjongHandRenderer {
             Canvas canvas,
             TaizhouMahjongVisibleRound round,
             TaizhouMahjongHandProjection.Tile tile,
-            int renderedMeldCount,
+            float meldStartOffset,
             TaizhouMahjongPlayInteraction interaction,
             boolean actionMasked) {
         TaizhouMahjongPlayGesture.Tile input =
@@ -130,7 +130,7 @@ final class TaizhouMahjongHandRenderer {
         boolean selected =
                 input != null && Objects.equals(visual.selectedIndex(), input.index());
         TaizhouMahjongHandLayout.TilePosition position =
-                position(round, tile, renderedMeldCount, selected);
+                position(round, tile, meldStartOffset, selected);
         tilePainter.drawHandTile(
                 canvas,
                 position,
@@ -152,15 +152,15 @@ final class TaizhouMahjongHandRenderer {
             return;
         }
         TaizhouMahjongPlayInteraction.VisualState visual = interaction.visualState();
-        int renderedMeldCount =
-                renderedMeldCount(state, round, round.mySeat(), useVisibleMeldCount);
+        float meldStartOffset =
+                meldStartOffset(state, round, round.mySeat(), useVisibleMeldCount);
         for (TaizhouMahjongHandProjection.Tile tile :
-                TaizhouMahjongHandProjection.forSeat(round, round.mySeat(), renderedMeldCount)) {
+                TaizhouMahjongHandProjection.forSeat(round, round.mySeat(), meldStartOffset)) {
             if (originalIndex(tile) != visual.draggedIndex()) {
                 continue;
             }
             TaizhouMahjongHandLayout.TilePosition position =
-                    position(round, tile, renderedMeldCount, false);
+                    position(round, tile, meldStartOffset, false);
             tilePainter.draw(
                     canvas,
                     OriginalMahjongTileDrawPlan.atAnchor(
@@ -202,17 +202,36 @@ final class TaizhouMahjongHandRenderer {
     private static TaizhouMahjongHandLayout.TilePosition position(
             TaizhouMahjongVisibleRound round,
             TaizhouMahjongHandProjection.Tile tile,
-            int renderedMeldCount,
+            float meldStartOffset,
             boolean selected) {
         TaizhouMahjongVisibleRound.SeatHand hand = round.handAt(tile.serverSeat());
         return tile.drawn()
                 ? TaizhouMahjongHandLayout.drawnTile(
                         tile.localSeat(),
                         hand.concealedTiles().size(),
-                        renderedMeldCount,
+                        meldStartOffset,
                         selected)
                 : TaizhouMahjongHandLayout.handTile(
-                        tile.localSeat(), tile.handIndex(), renderedMeldCount, selected);
+                        tile.localSeat(), tile.handIndex(), meldStartOffset, selected);
+    }
+
+    /** {@code UIMahHandArea:_getHandMahsStartPos}：手牌从已渲染的副露之后开始。 */
+    private static float meldStartOffset(
+            GameplayTableState state,
+            TaizhouMahjongVisibleRound round,
+            int serverSeat,
+            boolean useVisibleMeldCount) {
+        int visibleCount = round.handAt(serverSeat).meldCount();
+        if (useVisibleMeldCount || state == null) {
+            // 快照回看没有公开副露载荷，只能按手牌自报的组数推 BOTTOM 的固定长度。
+            return TaizhouMahjongSeatMapper.toLocalSeat(
+                                    serverSeat, round.mySeat(), round.chairCount())
+                            == TaizhouMahjongTableLayout.SEAT_BOTTOM
+                    ? TaizhouMahjongHandLayout.bottomMeldStartOffset(visibleCount)
+                    : 0.0f;
+        }
+        return TaizhouMahjongMeldProjection.handStartOffset(
+                state.melds(), serverSeat, round.mySeat(), round.chairCount(), visibleCount);
     }
 
     static int renderedLocalMeldCount(
@@ -230,22 +249,12 @@ final class TaizhouMahjongHandRenderer {
             int serverSeat,
             boolean useVisibleMeldCount) {
         int visibleCount = round.handAt(serverSeat).meldCount();
-        int localSeat =
-                TaizhouMahjongSeatMapper.toLocalSeat(
-                        serverSeat, round.mySeat(), round.chairCount());
-        if (localSeat != TaizhouMahjongTableLayout.SEAT_BOTTOM) {
-            return 0;
-        }
         if (useVisibleMeldCount || state == null) {
             return visibleCount;
         }
-        int rendered = 0;
-        for (GameplayMeld meld : state.melds()) {
-            if (meld.seat() == serverSeat) {
-                rendered++;
-            }
-        }
-        return Math.min(rendered, visibleCount);
+        return TaizhouMahjongMeldProjection.renderableMeldCount(
+                TaizhouMahjongMeldProjection.seatMelds(state.melds(), serverSeat).size(),
+                visibleCount);
     }
 
     private static int color(

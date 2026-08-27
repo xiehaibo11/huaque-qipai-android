@@ -41,7 +41,6 @@ final class TaizhouMahjongWaitingChromeRenderer {
     private final Bitmap shuffle;
     private final Bitmap priceBackground;
     private final Bitmap roomCard;
-    private final Bitmap fortune;
     private final Bitmap ting;
     private final Bitmap chat;
     private final Bitmap voice;
@@ -74,7 +73,6 @@ final class TaizhouMahjongWaitingChromeRenderer {
         shuffle = bitmap(context, R.drawable.taizhou_mahjong_shuffle);
         priceBackground = bitmap(context, R.drawable.taizhou_mahjong_price_background);
         roomCard = bitmap(context, R.drawable.taizhou_mahjong_room_card_small);
-        fortune = bitmap(context, R.drawable.taizhou_mahjong_fortune);
         ting = TaizhouMahjongGameLayerBitmap.extract(gameLayerAtlas, "mah_ting_btn.png");
         luckyMission = bitmap(context, R.drawable.taizhou_mahjong_lucky_mission);
         treasurePot = bitmap(context, R.drawable.taizhou_mahjong_treasure_pot);
@@ -91,10 +89,13 @@ final class TaizhouMahjongWaitingChromeRenderer {
             boolean recordLocked,
             boolean showRecordRedPoint,
             boolean showTableActivityIcons,
-            boolean showTingButton,
             boolean showTrustButton,
+            boolean showRuleButton,
+            boolean showTingButton,
             float elapsedSeconds) {
-        drawNode(canvas, rule, TaizhouMahjongWaitingLayout.RULE_BUTTON);
+        if (showRuleButton) {
+            drawNode(canvas, rule, TaizhouMahjongWaitingLayout.RULE_BUTTON);
+        }
         drawRecord(canvas, recordLocked);
         if (showRecordRedPoint) {
             drawNode(
@@ -121,10 +122,9 @@ final class TaizhouMahjongWaitingChromeRenderer {
                 SHUFFLE_PRICE_CENTER_Y,
                 priceLabel(TaizhouRoomToolType.SHUFFLE));
 
+        // 原版 RightBtns/View.lua：听按钮默认隐藏，打出服务端 tingMahs 里的牌才显。
         if (showTingButton) {
             drawNode(canvas, ting, TaizhouMahjongWaitingLayout.TING_BUTTON);
-        } else {
-            drawNode(canvas, fortune, TaizhouMahjongWaitingLayout.FORTUNE_BUTTON);
         }
         drawNode(canvas, chat, TaizhouMahjongWaitingLayout.CHAT_BUTTON);
         drawNode(canvas, voice, TaizhouMahjongWaitingLayout.VOICE_BUTTON);
@@ -133,6 +133,13 @@ final class TaizhouMahjongWaitingChromeRenderer {
         }
         if (showCopyRecommendation) {
             drawCopyRecommendation(canvas);
+        }
+    }
+
+    void drawSettlementTopControls(Canvas canvas, boolean showTrustButton) {
+        drawNode(canvas, menu, TaizhouMahjongWaitingLayout.MENU_BUTTON);
+        if (showTrustButton) {
+            drawNode(canvas, trust, TaizhouMahjongWaitingLayout.TRUST_BUTTON);
         }
     }
 

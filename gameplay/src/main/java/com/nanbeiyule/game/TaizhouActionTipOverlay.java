@@ -21,9 +21,7 @@ import java.util.Objects;
  * {@code act_buhua} sprite), but the recovered archive contains neither the
  * {@code hu_ani} animation nor the tip show/hide timing code. This overlay
  * therefore draws the static frame centred on the table for a fixed window —
- * the centre placement matches the leftover CSB sprite's centre anchor, and
- * the 1.2s window (in {@link TaizhouActionTipTracker}) is a 南北娱乐 choice
- * inside the task-approved 1-1.5s range, not recovered original behaviour.
+ * the centre placement matches the leftover CSB sprite's centre anchor.
  */
 final class TaizhouActionTipOverlay {
     private static final Map<GameplayActionTip.Kind, String> FRAMES =
@@ -33,6 +31,7 @@ final class TaizhouActionTipOverlay {
         FRAMES.put(GameplayActionTip.Kind.CHOW, "act_chi.png");
         FRAMES.put(GameplayActionTip.Kind.PONG, "act_peng.png");
         FRAMES.put(GameplayActionTip.Kind.KONG, "act_gang.png");
+        FRAMES.put(GameplayActionTip.Kind.CONCEALED_KONG, "act_gang.png");
         FRAMES.put(GameplayActionTip.Kind.FLOWER, "act_buhua.png");
         FRAMES.put(GameplayActionTip.Kind.HU, "eff_hupai.png");
     }

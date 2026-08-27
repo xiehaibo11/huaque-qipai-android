@@ -5,10 +5,7 @@ import java.util.Optional;
 
 /**
  * Transient timing of the table-centre action tip (吃碰杠补花胡提示帧). The
- * original shows the matching frame in {@code UIMahLayerAction} after each
- * operation; the recovered archive does not include the tip show/hide timing
- * code, so the 1.2s window here is a 南北娱乐 choice inside the task-approved
- * 1-1.5s range, not recovered original behaviour.
+ * original clears action animations after 0.9s in AnimationLayer.
  *
  * <p>A tip appears only when the server projection publishes a NEWER tip
  * cursor: the first cursor seen after entering the table is just a baseline,
@@ -16,7 +13,9 @@ import java.util.Optional;
  * never extends the window.
  */
 final class TaizhouActionTipTracker {
-    static final long TIP_VISIBLE_MILLIS = 1_200L;
+    static final long TIP_VISIBLE_MILLIS = 900L;
+
+    record VisibleTip(GameplayActionTip tip, long elapsedMillis) {}
 
     private GameplayActionTip lastSeen;
     private GameplayActionTip shownTip;
@@ -42,10 +41,18 @@ final class TaizhouActionTipTracker {
 
     /** Returns the tip kind to draw at {@code nowElapsed}, or empty. */
     Optional<GameplayActionTip.Kind> visibleKind(long nowElapsed) {
-        if (shownTip == null || nowElapsed - shownAtElapsed >= TIP_VISIBLE_MILLIS) {
+        return visibleTip(nowElapsed).map(visible -> visible.tip().kind());
+    }
+
+    Optional<VisibleTip> visibleTip(long nowElapsed) {
+        if (shownTip == null) {
             return Optional.empty();
         }
-        return Optional.of(shownTip.kind());
+        long elapsed = nowElapsed - shownAtElapsed;
+        if (elapsed < 0L || elapsed >= TIP_VISIBLE_MILLIS) {
+            return Optional.empty();
+        }
+        return Optional.of(new VisibleTip(shownTip, elapsed));
     }
 
     /** Milliseconds until the running tip hides; 0 when nothing is showing. */

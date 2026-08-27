@@ -66,6 +66,13 @@ ATLASES = {
 # asset directory name -> original armature directory
 ARMATURES = {
     "taizhou_trust_effects/tuoguan_ani": "animation/GameCommon/tuoguan_ani",
+    "taizhou_mahjong_dice_effects/saizi_ani": "animation/Mahjong/Base/saizi_ani",
+    "taizhou_mahjong_action_effects/cardtype_ani": "animation/Mahjong/Base/cardtype_ani",
+    "taizhou_mahjong_cursor_effects/gb_ani": "animation/Mahjong/Base/gb_ani",
+}
+
+FRAME_SEQUENCES = {
+    "taizhou_mahjong_discard_effects/chupai": "animation/Common/xiaguangshengjing/chupai",
 }
 
 
@@ -129,6 +136,25 @@ def export_armatures(reference_root, assets_dir):
                 shutil.copyfile(path, target / path.name)
 
 
+def export_frame_sequences(reference_root, assets_dir):
+    for asset_name, source_name in FRAME_SEQUENCES.items():
+        source = reference_root / source_name
+        target = assets_dir / asset_name
+        target.mkdir(parents=True, exist_ok=True)
+        atlas = Image.open(source / "chupai.png").convert("RGBA")
+        for path in sorted(source.iterdir()):
+            if path.suffix == ".plist":
+                frames = plistlib.loads(path.read_bytes())["frames"]
+                (target / f"{path.stem}.json").write_text(
+                    json.dumps(frames, ensure_ascii=False, sort_keys=True),
+                    encoding="utf-8")
+                for index, frame_name in enumerate(sorted(frames)):
+                    export_atlas_frame(atlas, frames[frame_name]).save(
+                        target / f"chupai_{index:05d}.png")
+            else:
+                shutil.copyfile(path, target / path.name)
+
+
 def verify(output_dir, assets_dir):
     for output_name in SPRITES:
         path = output_dir / f"{output_name}.png"
@@ -144,6 +170,14 @@ def verify(output_dir, assets_dir):
             raise FileNotFoundError(f"Missing armature frame table in {directory}")
         if not any(directory.glob("*.png")):
             raise FileNotFoundError(f"Missing armature texture in {directory}")
+    for asset_name in FRAME_SEQUENCES:
+        directory = assets_dir / asset_name
+        if not any(directory.glob("*.json")):
+            raise FileNotFoundError(f"Missing frame sequence table in {directory}")
+        if not any(directory.glob("*.png")):
+            raise FileNotFoundError(f"Missing frame sequence texture in {directory}")
+        if not any(directory.glob("chupai_*.png")):
+            raise FileNotFoundError(f"Missing frame sequence frames in {directory}")
 
 
 def main():
@@ -159,8 +193,10 @@ def main():
     if not args.verify:
         export_drawables(args.reference_root, args.output_dir)
         export_armatures(args.reference_root, args.assets_dir)
+        export_frame_sequences(args.reference_root, args.assets_dir)
     verify(args.output_dir, args.assets_dir)
-    print(f"{len(SPRITES)} drawables, {len(ARMATURES)} armatures OK")
+    print(f"{len(SPRITES)} drawables, {len(ARMATURES)} armatures, "
+          f"{len(FRAME_SEQUENCES)} frame sequences OK")
 
 
 if __name__ == "__main__":

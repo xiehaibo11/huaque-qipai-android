@@ -3,6 +3,7 @@ package com.nanbeiyule.game.mahjong;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /** Exact four-direction discard layout from the recovered UIMahPlayerOutArea. */
 public final class TaizhouMahjongDiscardProjection {
@@ -16,6 +17,8 @@ public final class TaizhouMahjongDiscardProjection {
             float anchorY,
             int pose,
             int localZOrder) {}
+
+    public record Cursor(int localSeat, float designX, float androidY) {}
 
     private record Rule(
             TaizhouMahjongTableLayout.Slot root,
@@ -74,6 +77,29 @@ public final class TaizhouMahjongDiscardProjection {
                             local.zOrder()));
         }
         return List.copyOf(result);
+    }
+
+    public static Optional<Cursor> lastDiscardCursor(TaizhouMahjongVisibleRound round) {
+        if (round == null || round.lastDiscard() == null) {
+            return Optional.empty();
+        }
+        TaizhouMahjongVisibleRound.LastDiscard marker = round.lastDiscard();
+        int localSeat =
+                TaizhouMahjongSeatMapper.toLocalSeat(
+                        marker.seatNumber(), round.mySeat(), round.chairCount());
+        TaizhouMahjongVisibleRound.SeatRiver river = round.riverAt(marker.seatNumber());
+        Tile tile =
+                forLocalSeat(localSeat, round.chairCount(), river.tiles(), river.maxLineCount())
+                        .get(marker.tileIndex());
+        float width = MahjongTileSprite.topEdgeWidth(tile.pose()) * tile.effectiveScale();
+        float height = MahjongTileSprite.leftRightEdgeWidth(tile.pose()) * tile.effectiveScale();
+        float left = tile.designX() - tile.anchorX() * width;
+        float bottom = tile.cocosY() - tile.anchorY() * height;
+        return Optional.of(
+                new Cursor(
+                        localSeat,
+                        left + width / 2.0f,
+                        TaizhouMahjongTableLayout.designY(bottom + height + 20.0f)));
     }
 
     private static LocalPosition nextPosition(

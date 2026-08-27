@@ -16,15 +16,22 @@ public final class TaizhouMahjongPlayProjection {
         return localHand(round, permission, round.handAt(round.mySeat()).meldCount());
     }
 
+    /**
+     * @param permission 没有出牌权时为 null。原版 {@code UIMahTouchHandArea:_createMah} 对每张立牌
+     *     无条件 {@code setTouchEnabled(true)}，轮次不影响触摸；只有服务端 {@code msgPlayLmts}
+     *     下发的限制牌会被 {@code setMahTouchLimit} 关掉触摸。出牌与否由
+     *     {@code UIMahLayer:_onPlayMah} 的 {@code getPlayPower()} 决定，不是由触摸决定。
+     */
     public static List<TaizhouMahjongPlayGesture.Tile> localHand(
             TaizhouMahjongVisibleRound round,
             TaizhouMahjongPlayPermission permission,
             int renderedMeldCount) {
         Objects.requireNonNull(round, "round");
-        Objects.requireNonNull(permission, "permission");
         List<TaizhouMahjongHandProjection.Tile> hand =
                 TaizhouMahjongHandProjection.forSeat(
-                        round, round.mySeat(), renderedMeldCount);
+                        round,
+                        round.mySeat(),
+                        TaizhouMahjongHandLayout.bottomMeldStartOffset(renderedMeldCount));
         Set<Integer> presentIndexes = new HashSet<>();
         List<TaizhouMahjongPlayGesture.Tile> result = new ArrayList<>(hand.size());
         for (TaizhouMahjongHandProjection.Tile tile : hand) {
@@ -48,13 +55,30 @@ public final class TaizhouMahjongPlayProjection {
                             left + width,
                             bottom + height,
                             true,
-                            permission.playableOriginalIndexes().contains(originalIndex),
-                            permission.tingOriginalIndexes().contains(originalIndex),
-                            permission.actionMaskOriginalIndexes().contains(originalIndex),
-                            permission.preBaoOriginalIndexes().contains(originalIndex)));
+                            // 限制牌之外都可触摸；没有出牌权时同样可选中、可拖动。
+                            permission == null
+                                    || permission.playableOriginalIndexes()
+                                            .contains(originalIndex),
+                            contains(permission, TaizhouMahjongPlayPermission::tingOriginalIndexes,
+                                    originalIndex),
+                            contains(permission,
+                                    TaizhouMahjongPlayPermission::actionMaskOriginalIndexes,
+                                    originalIndex),
+                            contains(permission,
+                                    TaizhouMahjongPlayPermission::preBaoOriginalIndexes,
+                                    originalIndex)));
         }
-        validateIndexes(permission, presentIndexes);
+        if (permission != null) {
+            validateIndexes(permission, presentIndexes);
+        }
         return List.copyOf(result);
+    }
+
+    private static boolean contains(
+            TaizhouMahjongPlayPermission permission,
+            java.util.function.Function<TaizhouMahjongPlayPermission, Set<Integer>> indexes,
+            int originalIndex) {
+        return permission != null && indexes.apply(permission).contains(originalIndex);
     }
 
     public static TaizhouMahjongPlayGesture.Tile topTileAt(

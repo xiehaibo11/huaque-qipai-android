@@ -95,12 +95,14 @@ final class TaizhouTableTouchController {
     /** Drops any in-progress gesture when a fresh projection arrives. */
     void reset(GameplayTableState state) {
         activePlayTouch = false;
+        activeVoiceTouch = false;
         activeOverlayTouch = false;
         activeSettleTouch = false;
         activeTotalResultTouch = false;
         activeSettleReview = false;
         activeEarlyStartTouch = false;
         activeCanHuTouch = false;
+        activeWaitingAction = TaizhouMahjongWaitingProjection.Action.NONE;
         activeSettleAction = null;
         activeTotalResultAction = null;
         activeMultipleChoice = null;
@@ -113,6 +115,13 @@ final class TaizhouTableTouchController {
             activeTotalResultTouch = true;
             activeTotalResultAction =
                     totalResultInteraction.actionAt(tableState, designX, designY);
+            return true;
+        }
+        TaizhouMahjongWaitingProjection.Action chromeAction =
+                TaizhouMahjongWaitingProjection.actionAt(
+                        tableState, designX, designY, canHuTracker.tingButtonVisible());
+        if (settleInteraction.isBlocking(tableState) && isSettlementTopAction(chromeAction)) {
+            activeWaitingAction = chromeAction;
             return true;
         }
         // 结算页是模态整页：命中记录按钮，未命中也吞掉（Wave 3 batch-2 放行三按钮）。
@@ -158,9 +167,6 @@ final class TaizhouTableTouchController {
             listener.onPlayerHeadTapped(headSeat);
             return true;
         }
-        TaizhouMahjongWaitingProjection.Action chromeAction =
-                TaizhouMahjongWaitingProjection.actionAt(
-                        tableState, designX, designY, canHuTracker.tingButtonVisible());
         if (chromeAction == TaizhouMahjongWaitingProjection.Action.VOICE) {
             activeVoiceTouch = true;
             activeWaitingAction = TaizhouMahjongWaitingProjection.Action.NONE;
@@ -359,6 +365,11 @@ final class TaizhouTableTouchController {
         }
         activeWaitingAction = TaizhouMahjongWaitingProjection.Action.NONE;
         return false;
+    }
+
+    private static boolean isSettlementTopAction(TaizhouMahjongWaitingProjection.Action action) {
+        return action == TaizhouMahjongWaitingProjection.Action.MENU
+                || action == TaizhouMahjongWaitingProjection.Action.TRUST;
     }
 
     boolean onOther() {

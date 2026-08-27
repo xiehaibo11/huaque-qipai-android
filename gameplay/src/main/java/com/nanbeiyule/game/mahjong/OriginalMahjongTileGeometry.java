@@ -216,6 +216,16 @@ public final class OriginalMahjongTileGeometry {
                 face);
     }
 
+    /** {@code UIMah:getThick}：牌背与牌面底的初始厚度，加上当前外观的附加厚度。 */
+    public static float thickness(int pose) {
+        return thickness(pose, MahjongSettingData.appearance());
+    }
+
+    public static float thickness(int pose, MahjongTileAppearance appearance) {
+        return MahjongTileSprite.defaultThickness(pose)
+                + (canChangeThickness(pose) ? appearance.addedThickness() : 0.0f);
+    }
+
     static Layer jokerIcon(Composition composition) {
         if (composition == null || composition.face == null) {
             return null;

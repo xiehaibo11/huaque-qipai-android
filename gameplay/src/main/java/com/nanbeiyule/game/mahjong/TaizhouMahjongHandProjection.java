@@ -8,6 +8,12 @@ import java.util.Objects;
 /** Projects one server seat's private hand into original 2D positions and overlap order. */
 public final class TaizhouMahjongHandProjection {
     private static final int ORIGINAL_MAX_HAND_MAHS_COUNT = 17;
+    private static final List<Integer> ORIGINAL_LOCAL_DRAW_ORDER =
+            List.of(
+                    TaizhouMahjongTableLayout.SEAT_LEFT,
+                    TaizhouMahjongTableLayout.SEAT_RIGHT,
+                    TaizhouMahjongTableLayout.SEAT_TOP,
+                    TaizhouMahjongTableLayout.SEAT_BOTTOM);
 
     public record Tile(
             int serverSeat,
@@ -24,21 +30,16 @@ public final class TaizhouMahjongHandProjection {
 
     private TaizhouMahjongHandProjection() {}
 
-    /** Returns tiles in the same back-to-front order that Cocos local z-order produces. */
-    public static List<Tile> forSeat(
-            TaizhouMahjongVisibleRound round, int serverSeat) {
-        Objects.requireNonNull(round, "round");
-        return forSeat(round, serverSeat, round.handAt(serverSeat).meldCount());
-    }
-
     /**
-     * Projects a hand using the meld count that the meld layer can actually
-     * render. This keeps the hand area and the exposed-meld layer synchronized
-     * when seat-private {@code meldCount} and public meld payloads arrive on
-     * different event boundaries.
+     * Returns tiles in the same back-to-front order that Cocos local z-order
+     * produces, starting after the melds the meld layer can actually
+     * render ({@code UIMahHandArea:_getHandMahsStartPos}). This keeps the hand
+     * area and the exposed-meld layer synchronized when seat-private
+     * {@code meldCount} and public meld payloads arrive on different event
+     * boundaries.
      */
     public static List<Tile> forSeat(
-            TaizhouMahjongVisibleRound round, int serverSeat, int renderedMeldCount) {
+            TaizhouMahjongVisibleRound round, int serverSeat, float meldStartOffset) {
         Objects.requireNonNull(round, "round");
         TaizhouMahjongVisibleRound.SeatHand hand = round.handAt(serverSeat);
         int localSeat =
@@ -56,7 +57,7 @@ public final class TaizhouMahjongHandProjection {
                             false,
                             ORIGINAL_MAX_HAND_MAHS_COUNT - index * direction,
                             TaizhouMahjongHandLayout.handTile(
-                                    localSeat, index, renderedMeldCount, false)));
+                                    localSeat, index, meldStartOffset, false)));
         }
         if (hand.drawnTile() != null) {
             int handCount = hand.concealedTiles().size();
@@ -69,9 +70,25 @@ public final class TaizhouMahjongHandProjection {
                             true,
                             ORIGINAL_MAX_HAND_MAHS_COUNT - handCount * direction,
                             TaizhouMahjongHandLayout.drawnTile(
-                                    localSeat, handCount, renderedMeldCount)));
+                                    localSeat, handCount, meldStartOffset)));
         }
         result.sort(Comparator.comparingInt(Tile::localZOrder));
+        return List.copyOf(result);
+    }
+
+    public static List<Integer> serverSeatDrawOrder(TaizhouMahjongVisibleRound round) {
+        Objects.requireNonNull(round, "round");
+        List<Integer> result = new ArrayList<>(round.chairCount());
+        for (int localSeat : ORIGINAL_LOCAL_DRAW_ORDER) {
+            for (int serverSeat = 1; serverSeat <= round.chairCount(); serverSeat++) {
+                if (TaizhouMahjongSeatMapper.toLocalSeat(
+                                serverSeat, round.mySeat(), round.chairCount())
+                        == localSeat) {
+                    result.add(serverSeat);
+                    break;
+                }
+            }
+        }
         return List.copyOf(result);
     }
 

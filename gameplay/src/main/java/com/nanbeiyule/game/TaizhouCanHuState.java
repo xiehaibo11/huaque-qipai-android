@@ -14,6 +14,7 @@ import java.util.List;
 public record TaizhouCanHuState(
         boolean visible,
         List<Integer> huTargets,
+        List<List<InfoSegment>> infoRows,
         int columns,
         int rows,
         float backgroundWidth,
@@ -26,9 +27,16 @@ public record TaizhouCanHuState(
         TING_BUTTON
     }
 
+    /**
+     * 原版 {@code data[i]} 的 {@code huInfoNum}/{@code huInfo} 按逗号切出的一段：
+     * 数字加单位（「台」「胡」「张」），一格最多三段。
+     */
+    public record InfoSegment(int number, String unit) {}
+
     private static final TaizhouCanHuState HIDDEN =
             new TaizhouCanHuState(
                     false,
+                    List.of(),
                     List.of(),
                     0,
                     0,
@@ -40,6 +48,15 @@ public record TaizhouCanHuState(
 
     public TaizhouCanHuState {
         huTargets = huTargets == null ? List.of() : List.copyOf(huTargets);
+        infoRows = infoRows == null ? List.of() : List.copyOf(infoRows);
+        if (!infoRows.isEmpty() && infoRows.size() != huTargets.size()) {
+            throw new IllegalArgumentException("one info row per hu target");
+        }
+        for (List<InfoSegment> row : infoRows) {
+            if (row.size() > TaizhouCanHuLayout.INFO_ROW_OFFSETS.length) {
+                throw new IllegalArgumentException("at most three info segments per cell");
+            }
+        }
         source = source == null ? Source.SELECTED_TILE : source;
     }
 
@@ -47,15 +64,18 @@ public record TaizhouCanHuState(
         return HIDDEN;
     }
 
-    static TaizhouCanHuState shown(List<Integer> huTargets) {
-        return shown(huTargets, Source.SELECTED_TILE);
+    static TaizhouCanHuState shown(
+            List<Integer> huTargets, List<List<InfoSegment>> infoRows) {
+        return shown(huTargets, infoRows, Source.SELECTED_TILE);
     }
 
-    static TaizhouCanHuState shownFromTingButton(List<Integer> huTargets) {
-        return shown(huTargets, Source.TING_BUTTON);
+    static TaizhouCanHuState shownFromTingButton(
+            List<Integer> huTargets, List<List<InfoSegment>> infoRows) {
+        return shown(huTargets, infoRows, Source.TING_BUTTON);
     }
 
-    private static TaizhouCanHuState shown(List<Integer> huTargets, Source source) {
+    private static TaizhouCanHuState shown(
+            List<Integer> huTargets, List<List<InfoSegment>> infoRows, Source source) {
         if (huTargets == null || huTargets.isEmpty()) {
             throw new IllegalArgumentException("huTargets are required");
         }
@@ -86,6 +106,7 @@ public record TaizhouCanHuState(
         return new TaizhouCanHuState(
                 true,
                 huTargets,
+                infoRows,
                 columns,
                 rows,
                 backgroundWidth,

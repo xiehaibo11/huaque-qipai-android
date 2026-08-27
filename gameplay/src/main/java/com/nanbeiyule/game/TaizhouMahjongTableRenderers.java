@@ -50,6 +50,7 @@ final class TaizhouMahjongTableRenderers {
     final TaizhouRoundOverlayController roundOverlays;
     final TaizhouTableInfoRenderer tableInfo;
     final TaizhouCanHuRenderer canHu;
+    final TaizhouVoiceLoadOverlayRenderer voiceLoadOverlay;
 
     TaizhouMahjongTableRenderers(Context context) {
         this.context = context.getApplicationContext();
@@ -81,7 +82,10 @@ final class TaizhouMahjongTableRenderers {
                         decode(context, R.drawable.taizhou_mahjong_face_atlas),
                         mahjongIconAtlas,
                         decode(context, R.drawable.taizhou_mahjong_face_type_1));
-        discard = new TaizhouMahjongDiscardRenderer(tilePainter);
+        discard = new TaizhouMahjongDiscardRenderer(
+                tilePainter,
+                new TaizhouMahjongDiscardEffectRenderer(context),
+                decode(context, R.drawable.taizhou_mahjong_show_out_bg));
         centerClock = new TaizhouCenterClockRenderer(context, tilePainter);
         hand =
                 new TaizhouMahjongHandRenderer(
@@ -98,6 +102,7 @@ final class TaizhouMahjongTableRenderers {
         roomMessage = new TaizhouRoomMessageRenderer(context);
         tableInfo = new TaizhouTableInfoRenderer(context, tableInfoAtlas);
         canHu = new TaizhouCanHuRenderer(context, tilePainter);
+        voiceLoadOverlay = new TaizhouVoiceLoadOverlayRenderer(context);
         roundOverlays =
                 new TaizhouRoundOverlayController(
                         new TaizhouJokerAreaRenderer(tilePainter),
@@ -109,7 +114,8 @@ final class TaizhouMahjongTableRenderers {
                         new TaizhouActionBarHost(),
                         new TaizhouActionBarRenderer(
                                 decode(context, R.drawable.taizhou_mahjong_action_btn),
-                                tilePainter));
+                                tilePainter),
+                        new TaizhouMahjongActionEffectRenderer(context));
     }
 
     /**

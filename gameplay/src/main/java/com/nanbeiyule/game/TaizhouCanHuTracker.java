@@ -3,8 +3,10 @@ package com.nanbeiyule.game;
 import com.nanbeiyule.game.gameplay.GameplayPhase;
 import com.nanbeiyule.game.gameplay.GameplayTableState;
 import com.nanbeiyule.game.gameplay.GameplayTingInfo;
+import com.nanbeiyule.game.mahjong.TaizhouCanHuSurplus;
 import com.nanbeiyule.game.mahjong.TaizhouMahjongPlayGesture;
 import com.nanbeiyule.game.mahjong.TaizhouMahjongPlayInteraction;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +34,9 @@ final class TaizhouCanHuTracker {
     private GameplayTingInfo seenTingInfo;
     private Integer seenDiscard;
     private boolean suppressed;
-    private List<Integer> lastTingTargets = List.of();
+    private List<GameplayTingInfo.HuTarget> lastTingTargets = List.of();
+    private boolean showFanNum;
+    private boolean showHuNum;
     private boolean showingTingButtonPanel;
     private TaizhouCanHuState current = TaizhouCanHuState.hidden();
 
@@ -61,7 +65,9 @@ final class TaizhouCanHuTracker {
 
     void onSelfDiscardRequested(int discard) {
         GameplayTingInfo tingInfo = ownTingInfo();
-        List<Integer> targets = tingInfo == null ? List.of() : tingInfo.huTargetsFor(discard);
+        List<GameplayTingInfo.HuTarget> targets =
+                tingInfo == null ? List.of() : tingInfo.huTargetsFor(discard);
+        rememberShowFlags(tingInfo);
         lastTingTargets = List.copyOf(targets);
         showingTingButtonPanel = false;
         suppressed = true;
@@ -80,7 +86,9 @@ final class TaizhouCanHuTracker {
             return;
         }
         showingTingButtonPanel = true;
-        current = TaizhouCanHuState.shownFromTingButton(lastTingTargets);
+        current =
+                TaizhouCanHuState.shownFromTingButton(
+                        tiles(lastTingTargets), infoRows(lastTingTargets));
     }
 
     /** Original CanHuMahsUI:onBgClick closes the window without clearing last ting data. */
@@ -106,7 +114,9 @@ final class TaizhouCanHuTracker {
             return;
         }
         if (showingTingButtonPanel && tingButtonVisible()) {
-            current = TaizhouCanHuState.shownFromTingButton(lastTingTargets);
+            current =
+                    TaizhouCanHuState.shownFromTingButton(
+                            tiles(lastTingTargets), infoRows(lastTingTargets));
             return;
         }
 
@@ -121,16 +131,69 @@ final class TaizhouCanHuTracker {
         }
         seenTingInfo = tingInfo;
         seenDiscard = discard;
+        rememberShowFlags(tingInfo);
 
-        if (suppressed || tingInfo == null || discard == null) {
+        // 原版 UIMahLayer:_checkCanShowTing 还要求 getPlayPower()：没轮到自己时选中手牌
+        // 只抬牌，不弹可胡提示。
+        if (suppressed
+                || tingInfo == null
+                || discard == null
+                || interaction == null
+                || !interaction.hasPlayPermission()) {
             current = TaizhouCanHuState.hidden();
             return;
         }
-        List<Integer> targets = tingInfo.huTargetsFor(discard);
+        List<GameplayTingInfo.HuTarget> targets = tingInfo.huTargetsFor(discard);
         current =
                 targets.isEmpty()
                         ? TaizhouCanHuState.hidden()
-                        : TaizhouCanHuState.shown(targets);
+                        : TaizhouCanHuState.shown(tiles(targets), infoRows(targets));
+    }
+
+    private void rememberShowFlags(GameplayTingInfo tingInfo) {
+        if (tingInfo != null) {
+            showFanNum = tingInfo.showFanNum();
+            showHuNum = tingInfo.showHuNum();
+        }
+    }
+
+    private static List<Integer> tiles(List<GameplayTingInfo.HuTarget> targets) {
+        List<Integer> tiles = new ArrayList<>(targets.size());
+        for (GameplayTingInfo.HuTarget target : targets) {
+            tiles.add(target.tile());
+        }
+        return tiles;
+    }
+
+    /**
+     * 每格的 {@code huInfoNum}/{@code huInfo}：原版 {@code GameModule:canHuInfoNum} 先按
+     * {@code bShowFanNum}/{@code bShowHuNum} 拼「N台」「N胡」，{@code CanHuMahsUI:initUI} 的
+     * {@code needGetSurplusMahCount} 分支再补一段「N张」；胡任意牌没有剩余张数。
+     */
+    private List<List<TaizhouCanHuState.InfoSegment>> infoRows(
+            List<GameplayTingInfo.HuTarget> targets) {
+        List<List<TaizhouCanHuState.InfoSegment>> rows = new ArrayList<>(targets.size());
+        for (GameplayTingInfo.HuTarget target : targets) {
+            List<TaizhouCanHuState.InfoSegment> segments = new ArrayList<>(3);
+            if (showFanNum) {
+                segments.add(
+                        new TaizhouCanHuState.InfoSegment(
+                                target.fanPoint(), TaizhouCanHuLayout.FAN_UNIT));
+            }
+            if (showHuNum) {
+                segments.add(
+                        new TaizhouCanHuState.InfoSegment(
+                                target.huPoint(), TaizhouCanHuLayout.HU_UNIT));
+            }
+            if (target.tile() != GameplayTingInfo.ANY_TILE) {
+                segments.add(
+                        new TaizhouCanHuState.InfoSegment(
+                                TaizhouCanHuSurplus.remaining(tableState, target.tile()),
+                                TaizhouCanHuLayout.SURPLUS_UNIT));
+            }
+            rows.add(List.copyOf(segments));
+        }
+        return rows;
     }
 
     private GameplayTingInfo ownTingInfo() {
