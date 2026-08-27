@@ -1,7 +1,9 @@
 package com.nanbeiyule.game;
 
 import com.nanbeiyule.game.mahjong.round.MahjongCombType;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 台州麻将 30109 牌局音频目录：牌值/动作 → {@code res/raw} 资源名映射。
@@ -23,6 +25,9 @@ import java.util.Arrays;
  * <p>操作音按 SoundManager.luac:290-327 的七个函数恢复。
  */
 public final class TaizhouMahjongVoiceCatalog {
+    private static final int TAIZHOU_GAME_ID = 30109;
+    private static final String GAME_SOUND_VERSION = "1.0.0.2";
+
     /** 原版 30109 MahLayer/Mah 目录存在方言语音的 34 个牌值（十进制），升序。 */
     private static final int[] DISCARD_VOICE_TILES = {
         17, 18, 19, 20, 21, 22, 23, 24, 25,
@@ -75,6 +80,18 @@ public final class TaizhouMahjongVoiceCatalog {
     }
 
     private TaizhouMahjongVoiceCatalog() {}
+
+    public record VoicePackage(
+            int gameId, String version, List<String> rawResourceNames, List<String> assetPaths) {
+        public VoicePackage {
+            rawResourceNames = List.copyOf(rawResourceNames);
+            assetPaths = List.copyOf(assetPaths);
+        }
+
+        String cacheToken() {
+            return gameId + ":" + version + ":" + rawResourceNames.hashCode() + ":" + assetPaths.hashCode();
+        }
+    }
 
     /** Returns whether the original archive ships a discard voice for this tile value. */
     public static boolean hasDiscardVoice(int tileValue) {
@@ -129,5 +146,54 @@ public final class TaizhouMahjongVoiceCatalog {
     public static String winVoiceResource(boolean male, WinKind winKind) {
         String key = winKind == WinKind.SELF_DRAWN ? "hu_1" : "hu_2";
         return "taizhou_mahjong_action_dialect_" + (male ? "man_" : "women_") + key;
+    }
+
+    public static List<String> firstLoadResourceNames() {
+        List<String> resources = new ArrayList<>();
+        for (TableSound sound : TableSound.values()) {
+            resources.add(sound.resourceName());
+        }
+        for (int tile : DISCARD_VOICE_TILES) {
+            resources.add(discardVoiceResource(true, tile));
+            resources.add(discardVoiceResource(false, tile));
+            resources.add(standardDiscardVoiceResource(true, tile));
+            resources.add(standardDiscardVoiceResource(false, tile));
+        }
+        for (MahjongCombType combType :
+                List.of(
+                        MahjongCombType.CHOW,
+                        MahjongCombType.PONG,
+                        MahjongCombType.EXPOSED_KONG,
+                        MahjongCombType.CONCEALED_KONG,
+                        MahjongCombType.FILL_KONG)) {
+            resources.add(meldVoiceResource(true, combType));
+            resources.add(meldVoiceResource(false, combType));
+        }
+        resources.add(flowerVoiceResource(true));
+        resources.add(flowerVoiceResource(false));
+        resources.add(winVoiceResource(true, WinKind.SELF_DRAWN));
+        resources.add(winVoiceResource(false, WinKind.SELF_DRAWN));
+        resources.add(winVoiceResource(true, WinKind.DISCARD));
+        resources.add(winVoiceResource(false, WinKind.DISCARD));
+        return List.copyOf(resources);
+    }
+
+    public static List<String> firstLoadAssetPaths() {
+        List<String> assets = new ArrayList<>();
+        for (int index = 1; index <= 9; index++) {
+            assets.add("audio/Speak/30109/dialect/Man/M_Speak" + index + ".mp3");
+            assets.add("audio/Speak/30109/dialect/Women/W_Speak" + index + ".mp3");
+            assets.add("audio/Speak/30109/standard/Man/M_Speak" + index + ".mp3");
+            assets.add("audio/Speak/30109/standard/Women/W_Speak" + index + ".mp3");
+        }
+        return List.copyOf(assets);
+    }
+
+    public static VoicePackage firstLoadPackage() {
+        return new VoicePackage(
+                TAIZHOU_GAME_ID,
+                GAME_SOUND_VERSION,
+                firstLoadResourceNames(),
+                firstLoadAssetPaths());
     }
 }

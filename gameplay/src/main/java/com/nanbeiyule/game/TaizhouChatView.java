@@ -6,8 +6,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.MotionEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 /** Canvas reconstruction of Common/CSB/GameBase/ChatLayer.csb. */
@@ -59,8 +61,8 @@ final class TaizhouChatView extends TaizhouToolView {
         this.state = state == null ? TaizhouRoomToolsState.empty("") : state;
         this.mySeat = mySeat;
         this.actions = actions;
-        panelBackground = bitmap(R.drawable.taizhou_tool_chat_bg_2);
-        contentBackground = bitmap(R.drawable.taizhou_tool_chat_bg);
+        panelBackground = bitmap(TaizhouWaitingToolLayout.CHAT_PANEL_BACKGROUND);
+        contentBackground = bitmap(TaizhouWaitingToolLayout.CHAT_CONTENT_BACKGROUND);
         itemBackground = bitmap(R.drawable.taizhou_tool_chat_talk_item_bg);
         emojiBackground = bitmap(R.drawable.taizhou_tool_chat_emoji_bg);
         recordSelfBackground = bitmap(R.drawable.taizhou_tool_chat_record_self_bg);
@@ -90,8 +92,8 @@ final class TaizhouChatView extends TaizhouToolView {
         canvas.drawRect(0.0f, 0.0f, 1920.0f, 1080.0f, fillPaint);
         canvas.save();
         canvas.translate(panelOffset, 0.0f);
-        drawBitmap(canvas, panelBackground, new RectF(1260.0f, 100.0f, 1920.0f, 980.0f));
-        drawBitmap(canvas, contentBackground, new RectF(1283.0f, 100.0f, 1813.0f, 920.0f));
+        drawBitmap(canvas, panelBackground, rect(TaizhouWaitingToolLayout.CHAT_PANEL));
+        drawBitmap(canvas, contentBackground, rect(TaizhouWaitingToolLayout.CHAT_CONTENT));
         drawTab(canvas, talkTabs, page == Page.TALK, 1877.0f, 209.0f);
         drawTab(canvas, emojiTabs, page == Page.EMOJI, 1868.0f, 388.0f);
         drawTab(canvas, recordTabs, page == Page.RECORD, 1869.0f, 563.0f);
@@ -113,18 +115,54 @@ final class TaizhouChatView extends TaizhouToolView {
         List<String> phrases = state.quickPhrases();
         int count = Math.min(9, phrases.size());
         for (int index = 0; index < count; index++) {
-            float top = 105.0f + index * 80.0f;
-            drawBitmap(canvas, itemBackground, new RectF(1290.0f, top, 1806.0f, top + 75.0f));
-            textPaint.setTextAlign(android.graphics.Paint.Align.LEFT);
-            textPaint.setTextSize(25.0f);
-            textPaint.setColor(Color.rgb(112, 72, 39));
-            canvas.drawText(phrases.get(index), 1310.0f, top + 49.0f, textPaint);
-            textPaint.setTextAlign(android.graphics.Paint.Align.CENTER);
+            float top =
+                    TaizhouWaitingToolLayout.CHAT_CONTENT.top()
+                            + index * TaizhouWaitingToolLayout.CHAT_QUICK_PHRASE_ROW_HEIGHT;
+            drawBitmap(
+                    canvas,
+                    itemBackground,
+                    new RectF(
+                            TaizhouWaitingToolLayout.CHAT_QUICK_PHRASE_ITEM_LEFT,
+                            top,
+                            TaizhouWaitingToolLayout.CHAT_QUICK_PHRASE_ITEM_LEFT
+                                    + TaizhouWaitingToolLayout.CHAT_QUICK_PHRASE_ITEM_WIDTH,
+                            top + TaizhouWaitingToolLayout.CHAT_QUICK_PHRASE_ITEM_HEIGHT));
+            drawPhrase(canvas, phrases.get(index), top);
         }
         if (count == 0) {
-            drawText(canvas, "正在加载俏皮话...", 1548.0f, 520.0f, 30.0f,
+            drawText(canvas, "正在加载俏皮话...", 1548.0f, 550.0f, 30.0f,
                     Color.rgb(135, 92, 48));
         }
+    }
+
+    private void drawPhrase(Canvas canvas, String text, float top) {
+        RectF box =
+                new RectF(
+                        TaizhouWaitingToolLayout.CHAT_QUICK_PHRASE_TEXT_LEFT,
+                        top - 2.5f,
+                        TaizhouWaitingToolLayout.CHAT_QUICK_PHRASE_TEXT_LEFT
+                                + TaizhouWaitingToolLayout.CHAT_QUICK_PHRASE_TEXT_WIDTH,
+                        top + 77.5f);
+        textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setTextSize(TaizhouWaitingToolLayout.CHAT_QUICK_PHRASE_TEXT_SIZE);
+        textPaint.setColor(TaizhouWaitingToolLayout.CHAT_QUICK_PHRASE_TEXT_COLOR);
+        textPaint.setStyle(Paint.Style.FILL);
+        List<String> lines =
+                wrappedLines(text, TaizhouWaitingToolLayout.CHAT_QUICK_PHRASE_TEXT_WIDTH);
+        Paint.FontMetrics metrics = textPaint.getFontMetrics();
+        float lineHeight = metrics.descent - metrics.ascent;
+        float baseline =
+                box.centerY()
+                        - (metrics.ascent + (lines.size() - 1) * lineHeight + metrics.descent)
+                                / 2.0f;
+        int save = canvas.save();
+        canvas.clipRect(box);
+        for (String line : lines) {
+            canvas.drawText(line, box.left, baseline, textPaint);
+            baseline += lineHeight;
+        }
+        canvas.restoreToCount(save);
+        textPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     private void drawEmoji(Canvas canvas) {
@@ -133,7 +171,7 @@ final class TaizhouChatView extends TaizhouToolView {
             int row = index / 4;
             int column = index % 4;
             float centerX = 1348.0f + column * 128.5f;
-            float centerY = 167.5f + row * 135.0f;
+            float centerY = 195.5f + row * 135.0f;
             drawCentered(canvas, emojiBackground, centerX, centerY, 117.0f, 116.0f);
             // Chat/View.lua loads the 55x55 atlas frame into the placeholder ImageView and then
             // applies setScale(1.68), so the drawn icon is 92.4 square, not the raw frame size.
@@ -141,7 +179,7 @@ final class TaizhouChatView extends TaizhouToolView {
                     EMOJI_ICON_SIZE, EMOJI_ICON_SIZE);
         }
         if (count == 0) {
-            drawText(canvas, "正在加载表情...", 1548.0f, 520.0f, 30.0f,
+            drawText(canvas, "正在加载表情...", 1548.0f, 550.0f, 30.0f,
                     Color.rgb(135, 92, 48));
         }
     }
@@ -149,7 +187,7 @@ final class TaizhouChatView extends TaizhouToolView {
     private void drawRecords(Canvas canvas) {
         List<TaizhouRoomToolsState.Message> messages = state.messages();
         if (messages.isEmpty()) {
-            drawText(canvas, "暂无聊天记录", 1548.0f, 520.0f, 32.0f,
+            drawText(canvas, "暂无聊天记录", 1548.0f, 550.0f, 32.0f,
                     Color.rgb(135, 92, 48));
             return;
         }
@@ -163,10 +201,11 @@ final class TaizhouChatView extends TaizhouToolView {
             TaizhouRoomToolsState.Message message = messages.get(position);
             boolean self = message.senderSeat() == mySeat;
             float centerY =
-                    180.0f
+                    TaizhouChatRecordScroll.ROW_TOP
                             + position * TaizhouChatRecordScroll.ROW_HEIGHT
                             - recordScroll.offset();
-            if (centerY < 45.0f || centerY > 975.0f) {
+            if (centerY < TaizhouWaitingToolLayout.CHAT_CONTENT.top() - 72.5f
+                    || centerY > TaizhouWaitingToolLayout.CHAT_CONTENT.bottom() + 72.5f) {
                 continue;
             }
             float centerX = self ? 1590.0f : 1500.0f;
@@ -323,4 +362,24 @@ final class TaizhouChatView extends TaizhouToolView {
         }
         return value.substring(0, limit) + "...";
     }
+
+    private List<String> wrappedLines(String value, float width) {
+        String text = value == null ? "" : value;
+        if (text.isEmpty()) {
+            return List.of("");
+        }
+        List<String> lines = new ArrayList<>();
+        int start = 0;
+        while (start < text.length()) {
+            int count =
+                    Math.max(
+                            1,
+                            textPaint.breakText(
+                                    text, start, text.length(), true, width, null));
+            lines.add(text.substring(start, start + count));
+            start += count;
+        }
+        return lines;
+    }
+
 }

@@ -11,12 +11,11 @@ record TaizhouRoomMessagePresentation(Kind kind, String text, int emojiIndex) {
         String text =
                 "VOICE".equals(message.type())
                         ? "[语音 " + Math.max(1, message.durationMillis() / 1_000) + "秒]"
-                        : abbreviate(message.text(), 17);
+                        : safe(message.text());
         return new TaizhouRoomMessagePresentation(Kind.TEXT, text, -1);
     }
 
-    private static String abbreviate(String value, int limit) {
-        String safe = value == null ? "" : value;
-        return safe.length() <= limit ? safe : safe.substring(0, limit) + "...";
+    private static String safe(String value) {
+        return value == null ? "" : value;
     }
 }

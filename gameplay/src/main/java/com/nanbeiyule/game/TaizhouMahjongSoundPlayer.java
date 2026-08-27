@@ -5,9 +5,12 @@ import android.content.res.Resources;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.os.SystemClock;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 台州麻将 30109 牌局音效播放器：按资源名播放 {@link TaizhouRoundAudioDirector}
@@ -22,6 +25,10 @@ import java.util.Map;
  * {@link #release()}（批 2 装配挂钩点）。
  */
 final class TaizhouMahjongSoundPlayer {
+    interface PreloadListener {
+        void onPreloadProgress(int loaded, int total);
+    }
+
     private final Context applicationContext;
     private final SoundPool soundPool;
     private final TaizhouMahjongSoundDebounce debounce = new TaizhouMahjongSoundDebounce();
@@ -30,8 +37,12 @@ final class TaizhouMahjongSoundPlayer {
     private final Map<Integer, String> namesBySoundId = new HashMap<>();
     private final Map<String, Boolean> loadReady = new HashMap<>();
     private final Map<String, Boolean> pendingPlay = new HashMap<>();
+    private final Set<String> preloadPending = new LinkedHashSet<>();
     private float soundVolume = 1.0f;
     private float voiceVolume = 0.5f;
+    private PreloadListener preloadListener;
+    private int preloadTotal;
+    private int preloadFinished;
     private boolean released;
 
     TaizhouMahjongSoundPlayer(Context context) {
@@ -47,6 +58,44 @@ final class TaizhouMahjongSoundPlayer {
                                         .build())
                         .build();
         soundPool.setOnLoadCompleteListener(this::onLoadComplete);
+    }
+
+    void preload(Collection<String> resourceNames, PreloadListener listener) {
+        preloadPending.clear();
+        preloadListener = listener;
+        preloadFinished = 0;
+        Set<String> names = new LinkedHashSet<>();
+        if (resourceNames != null) {
+            for (String resourceName : resourceNames) {
+                if (resourceName != null && !resourceName.isBlank()) {
+                    names.add(resourceName);
+                }
+            }
+        }
+        preloadTotal = names.size();
+        if (released || preloadTotal == 0) {
+            notifyPreload();
+            return;
+        }
+        for (String resourceName : names) {
+            int resourceId = resourceId(resourceName);
+            if (resourceId == 0 || Boolean.TRUE.equals(loadReady.get(resourceName))) {
+                preloadFinished++;
+                continue;
+            }
+            preloadPending.add(resourceName);
+            if (!soundIdsByName.containsKey(resourceName)) {
+                int soundId = soundPool.load(applicationContext, resourceId, 1);
+                if (soundId == 0) {
+                    preloadPending.remove(resourceName);
+                    preloadFinished++;
+                    continue;
+                }
+                soundIdsByName.put(resourceName, soundId);
+                namesBySoundId.put(soundId, resourceName);
+            }
+        }
+        notifyPreload();
     }
 
     /** 播放 director 输出的整份清单；空清单直接返回。 */
@@ -93,6 +142,10 @@ final class TaizhouMahjongSoundPlayer {
         voiceVolume = settings.voiceEnabled() ? settings.voiceVolume() / 100f : 0f;
     }
 
+    boolean hasRawResource(String resourceName) {
+        return resourceName != null && resourceId(resourceName) != 0;
+    }
+
     /** 停止全部在播音效并清空防抖窗口；开局/离桌切换时由装配方调用。 */
     void stopAll() {
         if (released) {
@@ -110,6 +163,7 @@ final class TaizhouMahjongSoundPlayer {
         }
         released = true;
         pendingPlay.clear();
+        preloadPending.clear();
         soundPool.release();
     }
 
@@ -134,9 +188,11 @@ final class TaizhouMahjongSoundPlayer {
             soundIdsByName.remove(name);
             namesBySoundId.remove(sampleId);
             pendingPlay.remove(name);
+            onPreloadLoaded(name);
             return;
         }
         loadReady.put(name, Boolean.TRUE);
+        onPreloadLoaded(name);
         if (pendingPlay.remove(name) != null && !released) {
             float volume = volumeFor(name);
             if (volume > 0f) {
@@ -150,5 +206,23 @@ final class TaizhouMahjongSoundPlayer {
                         || resourceName.startsWith("taizhou_mahjong_action_")
                 ? voiceVolume
                 : soundVolume;
+    }
+
+    private void onPreloadLoaded(String resourceName) {
+        if (preloadPending.remove(resourceName)) {
+            preloadFinished++;
+            notifyPreload();
+        }
+    }
+
+    private void notifyPreload() {
+        PreloadListener listener = preloadListener;
+        if (listener != null) {
+            listener.onPreloadProgress(preloadFinished, preloadTotal);
+        }
+        if (preloadTotal == 0 || preloadFinished >= preloadTotal) {
+            preloadPending.clear();
+            preloadListener = null;
+        }
     }
 }
